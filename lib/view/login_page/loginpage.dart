@@ -214,10 +214,10 @@ class _LoginpageState extends State<Loginpage> {
           actions: [
             InkWell(
               onTap: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Bottom_navigation(),
+                      builder: (context) => BottomNavigation(),
                     ));
               },
               child: Container(
