@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
+import 'package:flutter_application_1/model/leave_model/leave_model.dart';
 import 'package:flutter_application_1/view/bottom_navigation/bottom_navigation.dart';
-import 'package:flutter_application_1/view/leave_page/leave_page.dart';
+import 'package:provider/provider.dart';
 
 class ApplyLeave extends StatefulWidget {
   const ApplyLeave({super.key});
@@ -10,6 +14,14 @@ class ApplyLeave extends StatefulWidget {
 }
 
 class _ApplyLeaveState extends State<ApplyLeave> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController leaveTypeController = TextEditingController();
+  TextEditingController contactController = TextEditingController();
+  TextEditingController startDateController = TextEditingController();
+  TextEditingController endDateController = TextEditingController();
+  TextEditingController reasonController = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+
   final _formKey = GlobalKey<FormState>();
 
   void showDialogWithFields(BuildContext context) {
@@ -33,14 +45,14 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 10,
                 ),
                 Text(
-                  "Leave Applied\n   sucessfully",
+                  "Leave Applied\n   successfully",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                       fontSize: 20),
                 ),
                 Text(
-                  " Your has been leave applied sucessfully",
+                  " Your leave has been applied successfully",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black.withOpacity(.5),
@@ -81,6 +93,25 @@ class _ApplyLeaveState extends State<ApplyLeave> {
     );
   }
 
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2024, 1),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        String convertedDateTime =
+            "${picked.year.toString()}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+        controller.value = TextEditingValue(text: convertedDateTime);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,10 +121,11 @@ class _ApplyLeaveState extends State<ApplyLeave> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         leading: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back)),
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -106,11 +138,13 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 20,
                 ),
                 TextFormField(
+                  controller: titleController,
                   decoration: const InputDecoration(
-                      labelText: 'Title',
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue))),
+                    labelText: 'Title',
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue)),
+                  ),
                   onSaved: (String? value) {},
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
@@ -122,11 +156,13 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 20,
                 ),
                 TextFormField(
+                  controller: leaveTypeController,
                   decoration: const InputDecoration(
-                      labelText: 'Leave type',
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue))),
+                    labelText: 'Leave type',
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue)),
+                  ),
                   onSaved: (String? value) {},
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
@@ -138,11 +174,13 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 20,
                 ),
                 TextFormField(
+                  controller: contactController,
                   decoration: const InputDecoration(
-                      labelText: 'Contact number',
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue))),
+                    labelText: 'Contact number',
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue)),
+                  ),
                   onSaved: (String? value) {},
                   validator: (String? value) {
                     return (value == null ||
@@ -156,11 +194,16 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 20,
                 ),
                 TextFormField(
+                  controller: startDateController,
                   decoration: const InputDecoration(
-                      labelText: 'Start date',
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue))),
+                    suffixIcon: Icon(Icons.date_range_outlined),
+                    labelText: 'Start date',
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue)),
+                  ),
+                  readOnly: true,
+                  onTap: () => _selectDate(context, startDateController),
                   onSaved: (String? value) {},
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
@@ -172,11 +215,16 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 20,
                 ),
                 TextFormField(
+                  controller: endDateController,
                   decoration: const InputDecoration(
-                      labelText: 'End date',
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue))),
+                    labelText: 'End date',
+                    suffixIcon: Icon(Icons.date_range_outlined),
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue)),
+                  ),
+                  readOnly: true,
+                  onTap: () => _selectDate(context, endDateController),
                   onSaved: (String? value) {},
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
@@ -188,11 +236,13 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 20,
                 ),
                 TextFormField(
+                  controller: reasonController,
                   decoration: const InputDecoration(
-                      labelText: 'Reason',
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue))),
+                    labelText: 'Reason',
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue)),
+                  ),
                   onSaved: (String? value) {},
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
@@ -204,24 +254,59 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 60,
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    // await context.read<leave_controller>().addData(LeaveModel(
+                    //     title: titleController.text,
+                    //     contact_no: int.tryParse(contactController.text),
+                    //     end_date: endDateController.text,
+                    //     start_date: startDateController.text,
+                    //     leave_type: leaveTypeController.text,
+                    //     reason: reasonController.text));
+                    // log("sucess");
+                    // if (_formKey.currentState!.validate()) {
+                    //   showDialogWithFields(context);
+                    // }
+                    // ScaffoldMessenger.of(context)
+                    //     .showSnackBar(SnackBar(content: Text("sucess")));
+                    // Navigator.pop(context);
                     if (_formKey.currentState!.validate()) {
-                      showDialogWithFields(context);
+                      await context.read<leave_controller>().addData(LeaveModel(
+                            title: titleController.text,
+                            contact_no: int.tryParse(contactController.text),
+                            end_date: endDateController.text,
+                            start_date: startDateController.text,
+                            leave_type: leaveTypeController.text,
+                            reason: reasonController.text,
+                          ));
+                      log("sucess");
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text("sucess")));
+                      Navigator.pop(context);
+
+                      showDialogWithFields(
+                          context); // Assuming dialog closes on user confirmation
+
+                      // If dialog closes with confirmation (implement logic within dialog)
+                      Navigator.pop(context);
+                    } else {
+                      // Handle form validation failure (e.g., show an error message)
                     }
                   },
                   child: Container(
                     height: 50,
                     width: 250,
                     decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10)),
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Center(
                       child: Text(
                         "Apply leave",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
                       ),
                     ),
                   ),

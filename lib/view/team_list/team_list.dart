@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
 import 'package:flutter_application_1/view/team_list/widgets/add_members.dart';
+import 'package:provider/provider.dart';
 
 class TeamList extends StatefulWidget {
   const TeamList({super.key});
@@ -49,12 +51,15 @@ class _TeamListState extends State<TeamList> {
               height: 20,
             ),
             Expanded(
-              child: ListView.separated(
-                  itemBuilder: (context, index) => AddMember_widget(),
-                  separatorBuilder: (context, index) => SizedBox(
-                        height: 20,
-                      ),
-                  itemCount: 10),
+              child: Consumer<registration_controller>(
+                builder: (context, value, child) => ListView.separated(
+                    itemBuilder: (context, index) => AddMember_widget(
+                        registration_model: value.users_list[index]),
+                    separatorBuilder: (context, index) => SizedBox(
+                          height: 20,
+                        ),
+                    itemCount: value.users_list.length),
+              ),
             ),
             Container(
               height: 50,

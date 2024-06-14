@@ -31,27 +31,32 @@ class _HomepageState extends State<Homepage> {
           slivers: [
             SliverAppBar(
               leading: CircleAvatar(
-                child: Icon(Icons.person_2_outlined),
+                backgroundImage: NetworkImage(
+                    "https://images.pexels.com/photos/12169270/pexels-photo-12169270.jpeg?auto=compress&cs=tinysrgb&w=600"),
+                // child: Icon(Icons.person_2_outlined),
               ),
               title: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "asdfg",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                    "Name",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   ),
                   Text(
-                    "sub title",
-                    style: TextStyle(fontSize: 20),
+                    "Flutter developer",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black.withOpacity(.5),
+                        fontWeight: FontWeight.normal),
                   )
                 ],
               ),
-              actions: [
-                CircleAvatar(
-                  child: Icon(Icons.notification_important_outlined),
-                )
-              ],
+              // actions: [
+              //   CircleAvatar(
+              //     child: Icon(Icons.notification_important_outlined),
+              //   )
+              // ],
             ),
             SliverToBoxAdapter(
               child: SingleChildScrollView(

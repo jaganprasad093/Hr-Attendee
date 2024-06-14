@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 
-class Custom_PersonalInformation extends StatelessWidget {
+class Custom_PersonalInformation extends StatefulWidget {
   const Custom_PersonalInformation({super.key});
 
   @override
+  State<Custom_PersonalInformation> createState() =>
+      _Custom_PersonalInformationState();
+}
+
+class _Custom_PersonalInformationState
+    extends State<Custom_PersonalInformation> {
+  @override
+  static List<String> listOfPersonal_information = [
+    "full name",
+    "email address ",
+    "phone.no",
+    "address",
+  ];
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -23,7 +36,7 @@ class Custom_PersonalInformation extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          "name",
+                          listOfPersonal_information[0],
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
