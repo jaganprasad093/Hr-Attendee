@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/holiday_list/holiday_list.dart';
-import 'package:flutter_application_1/view/profile/profile.dart';
 import 'package:flutter_application_1/view/homepage/home_page.dart';
+import 'package:flutter_application_1/view/profile/profile.dart'; // Ensure this import is correct
 import 'package:flutter_application_1/view/leave_page/leave_page.dart';
 import 'package:flutter_application_1/view/team_list/team_list.dart';
 
@@ -13,12 +13,12 @@ class BottomNavigation extends StatefulWidget {
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
-  List<Widget> listscreen = [
+  final List<Widget> listscreen = [
     Homepage(),
     Leave_page(),
     TeamList(),
     HolidayList(),
-    ProfileScreen()
+    ProfileScreen(),
   ];
 
   int selectedIndex = 0;
@@ -28,38 +28,37 @@ class _BottomNavigationState extends State<BottomNavigation> {
     return Scaffold(
       body: listscreen[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
+        type: BottomNavigationBarType
+            .fixed, // Consider using `fixed` for stability
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.grey,
-        useLegacyColorScheme: true,
-
-        currentIndex: selectedIndex, // Set the current index
+        backgroundColor: Colors.white, // Changed to white for better contrast
+        currentIndex: selectedIndex,
         onTap: (value) {
           setState(() {
-            selectedIndex = value; // Update the selected index
+            selectedIndex = value;
           });
         },
-        items: const <BottomNavigationBarItem>[
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home', // Add label
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event_note_outlined),
-            label: 'Team leave', // Add label
+            label: 'Leave',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.event_note_outlined),
-            label: 'Holiday list', // Add label
+            icon: Icon(Icons.group),
+            label: 'Team',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.holiday_village_outlined),
-            label: 'Team list', // Add label
+            label: 'Holiday',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile', // Add label
+            label: 'Profile',
           ),
         ],
       ),

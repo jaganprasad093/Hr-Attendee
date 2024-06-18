@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/model/leave_model/leave_model.dart';
 
 class Custom_leave_widgets extends StatelessWidget {
-  const Custom_leave_widgets({super.key});
+  final LeaveModel leaveModel;
+  const Custom_leave_widgets({super.key, required this.leaveModel});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class Custom_leave_widgets extends StatelessWidget {
                       style: TextStyle(),
                     ),
                     Text(
-                      "Mar 4,2023-Mar 7,2023",
+                      leaveModel.start_date ?? "",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),

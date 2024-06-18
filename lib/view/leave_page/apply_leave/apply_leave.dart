@@ -281,7 +281,6 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                       log("sucess");
                       ScaffoldMessenger.of(context)
                           .showSnackBar(SnackBar(content: Text("sucess")));
-                      Navigator.pop(context);
 
                       showDialogWithFields(
                           context); // Assuming dialog closes on user confirmation

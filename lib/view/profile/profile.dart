@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/view/login_page/loginpage.dart';
 import 'package:flutter_application_1/view/profile/personal_information/personal_information.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -213,13 +215,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 20,
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(
+                  onTap: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool('isLoggedIn', false);
+
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => Loginpage(),
                         ),
-                        (route) => false);
+                        (route) => false,
+                      );
+                      setState(() {});
+                    } catch (e) {
+                      print('Error logging out: $e');
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to log out. Please try again.'),
+                        ),
+                      );
+                    }
                   },
                   child: Container(
                     child: Row(

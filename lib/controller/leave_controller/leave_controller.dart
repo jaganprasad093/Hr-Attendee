@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
@@ -17,5 +19,22 @@ class leave_controller with ChangeNotifier {
     };
 
     await collectionReference.add(data);
+  }
+
+  fetchData() {
+    collectionReference.snapshots().listen((event) {
+      //  log(event.docs.length);
+      LeaveList = event.docs
+          .map((e) => LeaveModel(
+                title: e["Title"],
+                contact_no: e["contact_no"],
+                leave_type: e["leave_type"],
+                start_date: e["start_date"],
+                end_date: e["end_date"],
+                reason: e["reason"],
+              ))
+          .toList();
+      notifyListeners();
+    });
   }
 }

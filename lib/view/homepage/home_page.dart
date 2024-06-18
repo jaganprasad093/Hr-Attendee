@@ -1,8 +1,6 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/view/homepage/widgets/check_in_out.dart';
+import 'package:intl/intl.dart';
 import 'package:slider_button/slider_button.dart';
 
 class Homepage extends StatefulWidget {
@@ -13,17 +11,17 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  var arr = List.filled(7, "");
+  List<Map<String, String>> dateList = [];
+  String? userName;
+
+  @override
+  void initState() {
+    super.initState();
+    dateList = getDateList(10);
+  }
 
   @override
   Widget build(BuildContext context) {
-    arr[0] = "Mon";
-    arr[1] = "Tue";
-    arr[2] = "Wed";
-    arr[3] = "Thu";
-    arr[4] = "Fri";
-    arr[5] = "Sat";
-    arr[6] = "Sun";
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -33,14 +31,13 @@ class _HomepageState extends State<Homepage> {
               leading: CircleAvatar(
                 backgroundImage: NetworkImage(
                     "https://images.pexels.com/photos/12169270/pexels-photo-12169270.jpeg?auto=compress&cs=tinysrgb&w=600"),
-                // child: Icon(Icons.person_2_outlined),
               ),
               title: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Name",
+                    userName ?? "Name",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   ),
                   Text(
@@ -52,18 +49,13 @@ class _HomepageState extends State<Homepage> {
                   )
                 ],
               ),
-              // actions: [
-              //   CircleAvatar(
-              //     child: Icon(Icons.notification_important_outlined),
-              //   )
-              // ],
             ),
             SliverToBoxAdapter(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(7, (index) {
+                  children: List.generate(dateList.length, (index) {
                     return Row(
                       children: [
                         Container(
@@ -77,22 +69,20 @@ class _HomepageState extends State<Homepage> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 30, vertical: 5)),
                               Text(
-                                "07",
+                                dateList[index]['day']!,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 30),
                               ),
-                              Text("sat"),
+                              Text(dateList[index]['date']!),
                               Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 30, vertical: 5)),
                             ],
                           ),
                         ),
-                        if (index <
-                            6) // Add separator except after the last item
+                        if (index < dateList.length - 1)
                           SizedBox(
-                            width:
-                                20, // Adjusting width for horizontal separator
+                            width: 20,
                           ),
                       ],
                     );
@@ -105,7 +95,7 @@ class _HomepageState extends State<Homepage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Today attendence",
+                    "Today attendance",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ],
@@ -114,9 +104,9 @@ class _HomepageState extends State<Homepage> {
             SliverGrid.builder(
               itemCount: 4,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Number of columns
-                mainAxisSpacing: 10.0, // Vertical space between grid items
-                crossAxisSpacing: 10.0, // Horizontal space between grid items
+                crossAxisCount: 2,
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 10.0,
                 childAspectRatio: 1.5,
               ),
               itemBuilder: (context, index) => Padding(
@@ -134,7 +124,13 @@ class _HomepageState extends State<Homepage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        children: [Icon(Icons.exit_to_app), Text("Check in")],
+                        children: [
+                          Icon(
+                            Icons.exit_to_app,
+                            color: Colors.blue,
+                          ),
+                          Text("Check in")
+                        ],
                       ),
                       Row(
                         children: [
@@ -184,10 +180,6 @@ class _HomepageState extends State<Homepage> {
                   SizedBox(
                     height: 10,
                   ),
-                  // ListView.separated(
-                  //     itemBuilder: ,
-                  //     separatorBuilder:,
-                  //     itemCount: 3)
                 ],
               ),
             ),
@@ -196,7 +188,7 @@ class _HomepageState extends State<Homepage> {
               separatorBuilder: (context, index) => SizedBox(
                 height: 20,
               ),
-              itemCount: 3,
+              itemCount: 5,
             )
           ],
         ),
@@ -227,5 +219,20 @@ class _HomepageState extends State<Homepage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  List<Map<String, String>> getDateList(int days) {
+    List<Map<String, String>> dateList = [];
+    DateTime now = DateTime.now();
+    DateFormat dayFormatter = DateFormat('dd');
+    DateFormat dateFormatter = DateFormat('E');
+
+    for (int i = 0; i < days; i++) {
+      DateTime date = now.add(Duration(days: i));
+      String day = dayFormatter.format(date);
+      String formattedDate = dateFormatter.format(date);
+      dateList.add({'day': day, 'date': formattedDate});
+    }
+    return dateList;
   }
 }

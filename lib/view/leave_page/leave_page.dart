@@ -1,7 +1,13 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
+import 'package:flutter_application_1/model/leave_model/leave_model.dart';
 import 'package:flutter_application_1/view/leave_page/apply_leave/apply_leave.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/custom_leave_widgets.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/team_leave_widgets.dart';
+import 'package:provider/provider.dart';
 
 class Leave_page extends StatefulWidget {
   const Leave_page({super.key});
@@ -156,7 +162,7 @@ class _Leave_pageState extends State<Leave_page> {
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
                             Text(
-                              "20",
+                              "",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30,
@@ -226,18 +232,29 @@ class _Leave_pageState extends State<Leave_page> {
                 ]),
             Expanded(
               child: TabBarView(children: [
-                ListView.separated(
-                    itemBuilder: (context, index) => Custom_leave_widgets(),
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 10,
-                        ),
-                    itemCount: 3),
-                ListView.separated(
-                    itemBuilder: (context, index) => Custom_leave_widgets(),
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 10,
-                        ),
-                    itemCount: 3),
+                Consumer<leave_controller>(
+                  builder: (context, value, child) => ListView.separated(
+                      itemBuilder: (context, index) {
+                        log(value.LeaveList.length.toString());
+                        return Custom_leave_widgets(
+                          leaveModel: value.LeaveList[index],
+                        );
+                      },
+                      separatorBuilder: (context, index) => SizedBox(
+                            height: 10,
+                          ),
+                      itemCount: 3),
+                ),
+                Consumer<leave_controller>(
+                  builder: (context, value, child) => ListView.separated(
+                      itemBuilder: (context, index) => Custom_leave_widgets(
+                            leaveModel: value.LeaveList[index],
+                          ),
+                      separatorBuilder: (context, index) => SizedBox(
+                            height: 10,
+                          ),
+                      itemCount: value.LeaveList.length),
+                ),
                 ListView.separated(
                     itemBuilder: (context, index) => TeamLeave_widgets(),
                     separatorBuilder: (context, index) => SizedBox(

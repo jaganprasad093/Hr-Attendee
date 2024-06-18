@@ -31,7 +31,7 @@ class AddMember_widget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      registration_model.firstname ?? "",
+                      "haa",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),

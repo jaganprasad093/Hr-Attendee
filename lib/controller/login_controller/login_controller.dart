@@ -6,13 +6,6 @@ import 'package:flutter/material.dart';
 class login_controller with ChangeNotifier {
   bool isLoading = false;
 
-// Future forget({
-
-// })async{
-
-// }
-
-  
   // write fn to register new user
   Future<bool> login(
       {required BuildContext context,

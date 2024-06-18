@@ -17,26 +17,38 @@ class _Check_inState extends State<Check_in> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(.3),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Center(child: Icon(Icons.exit_to_app_rounded)),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                Text(
-                  "Check in",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                      child: Icon(
+                    Icons.exit_to_app_rounded,
+                    color: Colors.blue,
+                  )),
                 ),
-                Text(
-                  "date",
-                  style: TextStyle(),
-                )
+                SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Check in",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    Text(
+                      "date",
+                      style: TextStyle(),
+                    )
+                  ],
+                ),
               ],
             ),
             Column(
@@ -57,7 +69,7 @@ class _Check_inState extends State<Check_in> {
         height: 100,
         width: 200,
         decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(.3),
+            color: Colors.grey.withOpacity(.1),
             borderRadius: BorderRadius.circular(14)),
       ),
     );

@@ -54,7 +54,8 @@ class _TeamListState extends State<TeamList> {
               child: Consumer<registration_controller>(
                 builder: (context, value, child) => ListView.separated(
                     itemBuilder: (context, index) => AddMember_widget(
-                        registration_model: value.users_list[index]),
+                          registration_model: value.users_list[index],
+                        ),
                     separatorBuilder: (context, index) => SizedBox(
                           height: 20,
                         ),
