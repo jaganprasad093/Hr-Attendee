@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/login_controller/login_controller.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
@@ -19,6 +22,14 @@ class _LoginpageState extends State<Loginpage> {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    if (kDebugMode) {
+      emailController.text = 'jaganprasad093@gmail.com';
+      passwordController.text = '12345678';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +145,7 @@ class _LoginpageState extends State<Loginpage> {
                             password: passwordController.text,
                           )
                           .then((value) async {
+                        log("value:$value");
                         if (value == true) {
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
@@ -255,12 +267,12 @@ class _LoginpageState extends State<Loginpage> {
           actions: [
             InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BottomNavigation(),
-                  ),
-                );
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BottomNavigation(),
+                    ),
+                    (route) => false);
               },
               child: Container(
                 height: 50,

@@ -21,7 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 3)).then((value) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-      if (isLoggedIn || user == null) {
+      log('isLoggedIn--$isLoggedIn');
+      log(" user=$user");
+      if (isLoggedIn && user != null) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => BottomNavigation()),
@@ -31,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => BottomNavigation()),
+          MaterialPageRoute(builder: (context) => Loginpage()),
           (route) => false,
         );
         log("login to homepage");

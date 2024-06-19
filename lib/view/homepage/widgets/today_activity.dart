@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Check_in extends StatefulWidget {
-  const Check_in({super.key});
+  const Check_in({super.key, required this.date, required this.checkin});
+  final DateTime date;
+  final bool checkin;
 
   @override
   State<Check_in> createState() => _Check_inState();
@@ -39,12 +42,12 @@ class _Check_inState extends State<Check_in> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Check in",
+                      widget.checkin ? "Check in" : "Check out",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     Text(
-                      "date",
+                      DateFormat("d/M/y").format(widget.date),
                       style: TextStyle(),
                     )
                   ],
@@ -55,7 +58,7 @@ class _Check_inState extends State<Check_in> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "2:30",
+                  DateFormat("h:m a").format(widget.date),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 Text(

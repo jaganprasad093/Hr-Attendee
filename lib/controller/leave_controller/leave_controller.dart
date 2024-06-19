@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
 
 class leave_controller with ChangeNotifier {
+  leave_controller() {
+    fetchData();
+  }
   var collectionReference = FirebaseFirestore.instance.collection("leave");
   List<LeaveModel> LeaveList = [];
 

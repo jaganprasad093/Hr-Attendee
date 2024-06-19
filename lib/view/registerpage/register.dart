@@ -1,7 +1,8 @@
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
-import 'package:flutter_application_1/model/registration_model.dart/registration_model.dart';
+import 'package:flutter_application_1/model/registration_model/registration_model.dart';
 import 'package:flutter_application_1/view/login_page/loginpage.dart';
 import 'package:provider/provider.dart';
 
@@ -149,17 +150,6 @@ class _RegisterpageState extends State<Registerpage> {
                         if (formKey.currentState!.validate()) {
                           if (passwordController.text ==
                               repasswordController.text) {
-                            await context
-                                .read<registration_controller>()
-                                .addData(
-                                  Registration_model(
-                                    firstname: firstnameController.text,
-                                    lastname: lastnameController.text,
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                  ),
-                                );
-
                             log("success");
 
                             context
@@ -172,8 +162,19 @@ class _RegisterpageState extends State<Registerpage> {
                                   password: passwordController.text,
                                   repassword: repasswordController.text,
                                 )
-                                .then((value) {
+                                .then((value) async {
                               log("register success");
+                              await context
+                                  .read<registration_controller>()
+                                  .addData(
+                                      Registration_model(
+                                        firstname: firstnameController.text,
+                                        lastname: lastnameController.text,
+                                        email: emailController.text,
+                                        password: passwordController.text,
+                                      ),
+                                      FirebaseAuth.instance.currentUser?.uid ??
+                                          "");
 
                               if (value == true) {
                                 ScaffoldMessenger.of(context)

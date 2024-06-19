@@ -218,6 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () async {
                     try {
                       await FirebaseAuth.instance.signOut();
+
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       await prefs.setBool('isLoggedIn', false);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/model/registration_model.dart/registration_model.dart';
+import 'package:flutter_application_1/model/registration_model/registration_model.dart';
 
 class AddMember_widget extends StatelessWidget {
   const AddMember_widget({super.key, required this.registration_model});
@@ -31,7 +31,7 @@ class AddMember_widget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "haa",
+                      registration_model.firstname ?? "",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -41,9 +41,7 @@ class AddMember_widget extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 80,
-                ),
+                Spacer(),
                 PopupMenuButton(
                   itemBuilder: (context) {
                     return [

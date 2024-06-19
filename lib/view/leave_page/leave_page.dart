@@ -243,7 +243,7 @@ class _Leave_pageState extends State<Leave_page> {
                       separatorBuilder: (context, index) => SizedBox(
                             height: 10,
                           ),
-                      itemCount: 3),
+                      itemCount: value.LeaveList.length),
                 ),
                 Consumer<leave_controller>(
                   builder: (context, value, child) => ListView.separated(

@@ -282,14 +282,9 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                       ScaffoldMessenger.of(context)
                           .showSnackBar(SnackBar(content: Text("sucess")));
 
-                      showDialogWithFields(
-                          context); // Assuming dialog closes on user confirmation
-
-                      // If dialog closes with confirmation (implement logic within dialog)
+                      showDialogWithFields(context);
                       Navigator.pop(context);
-                    } else {
-                      // Handle form validation failure (e.g., show an error message)
-                    }
+                    } else {}
                   },
                   child: Container(
                     height: 50,
