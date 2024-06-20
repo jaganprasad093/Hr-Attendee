@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
 import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/controller/login_controller/login_controller.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
@@ -31,6 +32,9 @@ class MYApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => leave_controller(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => HomeController(),
         )
       ],
       child: MaterialApp(

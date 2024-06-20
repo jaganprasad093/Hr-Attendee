@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
+import 'package:flutter_application_1/model/registration_model/registration_model.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_documents.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_information_widget.dart';
+import 'package:flutter_application_1/view/profile/personal_information/widgets/proffestional_informations.dart';
+import 'package:provider/provider.dart';
 
 class PersonalInformation extends StatefulWidget {
   const PersonalInformation({super.key});
@@ -50,20 +53,15 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 ]),
             Expanded(
               child: TabBarView(children: [
-                ListView.separated(
-                    itemBuilder: (context, index) =>
-                        Custom_PersonalInformation(),
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 10,
-                        ),
-                    itemCount: 5),
-                ListView.separated(
-                    itemBuilder: (context, index) =>
-                        Custom_PersonalInformation(),
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 10,
-                        ),
-                    itemCount: 10),
+                Consumer<registration_controller>(
+                  builder: (context, value, child) =>
+                      Custom_PersonalInformation(
+                    registrationmodel: value.users_list[1],
+                  ),
+                ),
+                Consumer<registration_controller>(
+                    builder: (context, value, child) =>
+                        Proffestional_informations()),
                 ListView.separated(
                     itemBuilder: (context, index) =>
                         Custom_PersonalDoucuments(),

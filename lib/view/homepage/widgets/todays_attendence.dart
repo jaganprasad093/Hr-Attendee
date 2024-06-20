@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TodaysAttendence extends StatefulWidget {
   const TodaysAttendence({super.key});
@@ -50,19 +54,24 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          "12:00",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
+                        Consumer<HomeController>(
+                          builder: (context, value, child) {
+                            String date;
+                            date = "";
+                            var d = value.checkinDate;
+                            log(" checkindate--$d");
+                            if (value.checkinDate != null) {
+                              date = DateFormat("h:m a")
+                                  .format(value.checkinDate!);
+                            }
+                            log("check in--$date");
+                            return Text(
+                              value.checkinDate != null ? date : "time",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 30),
+                            );
+                          },
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Am",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
-                        )
                       ],
                     ),
                     Text("On")
@@ -102,19 +111,22 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          "07:10",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
+                        Consumer<HomeController>(
+                          builder: (context, value, child) {
+                            String date;
+                            date = "";
+                            if (value.lastCheckOut != null) {
+                              date = DateFormat("h:m a")
+                                  .format(value.lastCheckOut!);
+                            }
+                            log("check out--$date");
+                            return Text(
+                              date,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 30),
+                            );
+                          },
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Am",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
-                        )
                       ],
                     ),
                     Text("Go home")

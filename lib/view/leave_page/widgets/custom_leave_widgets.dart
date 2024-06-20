@@ -25,10 +25,24 @@ class Custom_leave_widgets extends StatelessWidget {
                       "date",
                       style: TextStyle(),
                     ),
-                    Text(
-                      leaveModel.start_date ?? "",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    Row(
+                      children: [
+                        Text(
+                          leaveModel.start_date ?? "",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        Text(
+                          " to ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        Text(
+                          leaveModel.end_date ?? "",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -38,7 +52,7 @@ class Custom_leave_widgets extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white),
                   child: Text(
-                    "Approved",
+                    "Pending",
                     style: TextStyle(
                         color: Colors.green, fontWeight: FontWeight.bold),
                   ),

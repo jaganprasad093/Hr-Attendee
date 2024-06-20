@@ -138,18 +138,4 @@ class registration_controller with ChangeNotifier {
     }
     return null;
   }
-
-  // Future<List<Registration_model>> getUsers() async {
-  //   List<Registration_model> users = [];
-  //   try {
-  //     final snapshot = await collectionReference.get();
-  //     for (var doc in snapshot.docs) {
-  //       users.add(Registration_model.fromDocumentSnapshot(doc));
-  //     }
-  //     return users;
-  //   } catch (e) {
-  //     print(e);
-  //     return []; // Return empty list on error
-  //   }
-  // }
 }

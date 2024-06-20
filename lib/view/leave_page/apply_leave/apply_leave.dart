@@ -106,7 +106,7 @@ class _ApplyLeaveState extends State<ApplyLeave> {
       setState(() {
         selectedDate = picked;
         String convertedDateTime =
-            "${picked.year.toString()}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+            "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year.toString()}";
         controller.value = TextEditingValue(text: convertedDateTime);
       });
     }
@@ -255,20 +255,6 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                 ),
                 InkWell(
                   onTap: () async {
-                    // await context.read<leave_controller>().addData(LeaveModel(
-                    //     title: titleController.text,
-                    //     contact_no: int.tryParse(contactController.text),
-                    //     end_date: endDateController.text,
-                    //     start_date: startDateController.text,
-                    //     leave_type: leaveTypeController.text,
-                    //     reason: reasonController.text));
-                    // log("sucess");
-                    // if (_formKey.currentState!.validate()) {
-                    //   showDialogWithFields(context);
-                    // }
-                    // ScaffoldMessenger.of(context)
-                    //     .showSnackBar(SnackBar(content: Text("sucess")));
-                    // Navigator.pop(context);
                     if (_formKey.currentState!.validate()) {
                       await context.read<leave_controller>().addData(LeaveModel(
                             title: titleController.text,
@@ -283,7 +269,6 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                           .showSnackBar(SnackBar(content: Text("sucess")));
 
                       showDialogWithFields(context);
-                      Navigator.pop(context);
                     } else {}
                   },
                   child: Container(

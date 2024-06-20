@@ -26,8 +26,10 @@ class _View_allState extends State<View_all> {
         ),
         body: SafeArea(
           child: StreamBuilder(
-              stream:
-                  FirebaseFirestore.instance.collection('dates').snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('dates')
+                  .orderBy("dateTime", descending: true)
+                  .snapshots(),
               builder: (context, snapshot) {
                 var date = snapshot.data;
                 return ListView.separated(

@@ -19,6 +19,7 @@ class _RegisterpageState extends State<Registerpage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController repasswordController = TextEditingController();
+  bool invisible = true;
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -107,9 +108,18 @@ class _RegisterpageState extends State<Registerpage> {
                 SizedBox(height: 20),
                 TextFormField(
                   controller: passwordController,
-                  obscureText: true,
+                  obscureText: invisible,
                   decoration: InputDecoration(
                     hintText: "Password",
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          invisible = !invisible;
+                        });
+                      },
+                      child: Icon(
+                          invisible ? Icons.visibility : Icons.visibility_off),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -123,9 +133,18 @@ class _RegisterpageState extends State<Registerpage> {
                 SizedBox(height: 20),
                 TextFormField(
                   controller: repasswordController,
-                  obscureText: true,
+                  obscureText: invisible,
                   decoration: InputDecoration(
                     hintText: "Re-enter password",
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          invisible = !invisible;
+                        });
+                      },
+                      child: Icon(
+                          invisible ? Icons.visibility : Icons.visibility_off),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

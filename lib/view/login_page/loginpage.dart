@@ -18,6 +18,7 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
+  bool invisible = true;
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController emailController = TextEditingController();
@@ -92,9 +93,18 @@ class _LoginpageState extends State<Loginpage> {
                 SizedBox(height: 20),
                 TextFormField(
                   controller: passwordController,
-                  obscureText: true,
+                  obscureText: invisible,
                   decoration: InputDecoration(
                     hintText: "Password",
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          invisible = !invisible;
+                        });
+                      },
+                      child: Icon(
+                          invisible ? Icons.visibility : Icons.visibility_off),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -121,7 +131,7 @@ class _LoginpageState extends State<Loginpage> {
                             builder: (context) =>
                                 Consumer<registration_controller>(
                               builder: (context, value, child) =>
-                                  Forgot_password(),
+                                  ForgotPassword(),
                             ),
                           ),
                         );

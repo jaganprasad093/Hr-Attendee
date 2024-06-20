@@ -24,7 +24,7 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    dateList = getDateList(10);
+    dateList = getDateList(30);
   }
 
   @override

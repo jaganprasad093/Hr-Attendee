@@ -1,6 +1,6 @@
 class HomeModel {
-  String? date;
-  String? time;
+  DateTime? date;
+  DateTime? time;
   bool? check;
   HomeModel({this.check, this.date, this.time});
 }

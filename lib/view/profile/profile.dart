@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
 import 'package:flutter_application_1/view/login_page/loginpage.dart';
 import 'package:flutter_application_1/view/profile/personal_information/personal_information.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -54,9 +55,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ]),
             ),
             SizedBox(height: 10),
-            Text(
-              "username",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+            Consumer<registration_controller>(
+              builder: (context, value, child) => Text(
+                context.read<registration_controller>().user?.firstname ??
+                    "Name",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
             Text("Description"),
             SizedBox(height: 20),
