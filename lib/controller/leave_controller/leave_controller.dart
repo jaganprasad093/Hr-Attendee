@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
+import 'package:flutter_application_1/view/leave_page/apply_leave/apply_leave.dart';
 
 class leave_controller with ChangeNotifier {
   leave_controller() {
@@ -40,4 +41,6 @@ class leave_controller with ChangeNotifier {
       notifyListeners();
     });
   }
+
+  ApplyLeave() {}
 }

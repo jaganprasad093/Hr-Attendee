@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/view/leave_page/apply_leave/apply_leave.dart';
@@ -14,6 +15,13 @@ class Leave_page extends StatefulWidget {
 }
 
 class _Leave_pageState extends State<Leave_page> {
+  bool isCheckedApproved = false;
+  bool isCheckedUnapproved = false;
+  bool isCheckedPending = false;
+  bool isCheckedSickLeave = false;
+  bool isCheckedPlannedLeave = false;
+  bool isCheckedHoliday = false;
+
   int currentTabIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -41,7 +49,11 @@ class _Leave_pageState extends State<Leave_page> {
             SizedBox(
               width: 10,
             ),
-            Icon(Icons.tune_outlined),
+            InkWell(
+                onTap: () {
+                  showFilter();
+                },
+                child: Icon(Icons.tune_outlined)),
             SizedBox(
               width: 20,
             ),
@@ -77,7 +89,7 @@ class _Leave_pageState extends State<Leave_page> {
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
                             Text(
-                              "20",
+                              "0",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30,
@@ -114,7 +126,7 @@ class _Leave_pageState extends State<Leave_page> {
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
                             Text(
-                              "20",
+                              "0",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30,
@@ -158,12 +170,16 @@ class _Leave_pageState extends State<Leave_page> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
-                            Text(
-                              "",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Colors.green),
+                            Consumer<leave_controller>(
+                              builder: (context, value, child) => Text(
+                                value.LeaveList.length == null
+                                    ? "0"
+                                    : "${value.LeaveList.length}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Colors.green),
+                              ),
                             )
                           ],
                         ),
@@ -196,7 +212,7 @@ class _Leave_pageState extends State<Leave_page> {
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
                             Text(
-                              "20",
+                              "0",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30,
@@ -261,6 +277,210 @@ class _Leave_pageState extends State<Leave_page> {
               ]),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+// filter bottomsheet
+  void showFilter() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          height: 550,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Filter",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  "Status",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blue,
+                      value: isCheckedApproved,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isCheckedApproved = value!;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Approved",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blue,
+                      value: isCheckedUnapproved,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isCheckedUnapproved = value!;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Unapproved",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blue,
+                      value: isCheckedPending,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isCheckedPending = value!;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Pending",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Text(
+                  "Leave Type",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blue,
+                      value: isCheckedSickLeave,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isCheckedSickLeave = value!;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Sick leave",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blue,
+                      value: isCheckedPlannedLeave,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isCheckedPlannedLeave = value!;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Planned leave",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blue,
+                      value: isCheckedHoliday,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isCheckedHoliday = value!;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Holiday",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 150,
+                      child: Center(
+                        child: Text(
+                          "Reset",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.blue,
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 150,
+                      child: Center(
+                        child: Text(
+                          "Apply",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 30,
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

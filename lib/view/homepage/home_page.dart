@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
 import 'package:flutter_application_1/view/homepage/widgets/today_activity.dart';
 import 'package:flutter_application_1/view/homepage/widgets/slide_button.dart';
@@ -20,6 +23,7 @@ class _HomepageState extends State<Homepage> {
   List<Map<String, String>> dateList = [];
   String? userName;
   bool isSlide = false;
+  bool isDateSelected = true;
 
   @override
   void initState() {
@@ -69,42 +73,55 @@ class _HomepageState extends State<Homepage> {
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(dateList.length, (index) {
-                      return Row(
-                        children: [
-                          InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(.1),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 30, vertical: 5)),
-                                  Text(
-                                    dateList[index]['day']!,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 30),
-                                  ),
-                                  Text(dateList[index]['date']!),
-                                  Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 30, vertical: 5)),
-                                ],
+                  child: Consumer<HomeController>(
+                    builder: (context, value, child) => Row(
+                      children: List.generate(dateList.length, (index) {
+                        return Row(
+                          children: [
+                            InkWell(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: value.DateSelected.day ==
+                                            int.parse(dateList[index]['day']!)
+                                        ? Colors.blue
+                                        : Colors.grey.withOpacity(.1),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 30, vertical: 5)),
+                                    Text(
+                                      dateList[index]['day']!,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30),
+                                    ),
+                                    Text(dateList[index]['date']!),
+                                    Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 30, vertical: 5)),
+                                  ],
+                                ),
                               ),
+                              onTap: () {
+                                value.assignDate(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    int.parse(dateList[index]['day']!));
+
+                                // isDateSelected = !false;
+                              },
                             ),
-                          ),
-                          if (index < dateList.length - 1)
-                            SizedBox(
-                              width: 20,
-                            ),
-                        ],
-                      );
-                    }),
+                            if (index < dateList.length - 1)
+                              SizedBox(
+                                width: 20,
+                              ),
+                          ],
+                        );
+                      }),
+                    ),
                   ),
                 ),
               ),

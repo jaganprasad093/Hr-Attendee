@@ -8,14 +8,33 @@ class HomeController with ChangeNotifier {
     addcheckinListener();
   }
   DateTime? lastCheckOut;
+  DateTime DateSelected = DateTime.now();
   DateTime? checkinDate;
   Duration totalBreakTime = Duration.zero;
 
   addcheckinListener() {
-    FirebaseFirestore.instance.collection('dates').snapshots().listen((event) {
+    FirebaseFirestore.instance
+        .collection('dates')
+        .where("dateTime",
+            isGreaterThanOrEqualTo: DateSelected.millisecondsSinceEpoch)
+        .where("dateTime",
+            isLessThan: DateSelected.copyWith(day: DateSelected.day + 1))
+        .snapshots()
+        .listen((event) {
       getFirstCheckInOfDay();
       getLastCheckInOfDay();
+      break_time();
+      getTotalWorkingDaysOfCurrentMonth();
     });
+  }
+
+  Future<void> assignDate(int year, int month, int day) async {
+    DateSelected = DateTime(year, month, day);
+    getFirstCheckInOfDay();
+    getLastCheckInOfDay();
+    break_time();
+    getTotalWorkingDaysOfCurrentMonth();
+    notifyListeners();
   }
 
   addData(bool isSlide) {
@@ -82,6 +101,10 @@ class HomeController with ChangeNotifier {
   Future<void> getLastCheckInOfDay() async {
     var querySnapshot = await FirebaseFirestore.instance
         .collection('dates')
+        .where("dateTime",
+            isGreaterThanOrEqualTo: DateSelected.millisecondsSinceEpoch)
+        .where("dateTime",
+            isLessThan: DateSelected.copyWith(day: DateSelected.day + 1))
         .where('check', isEqualTo: false)
         .orderBy('dateTime', descending: true)
         .limit(1)
@@ -98,35 +121,66 @@ class HomeController with ChangeNotifier {
   }
 
   Future<void> break_time() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('dates')
-        .orderBy('dateTime', descending: false)
-        .get();
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('dates')
+          .orderBy('dateTime', descending: false)
+          .get();
 
-    List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-    checkinDate = null;
-    lastCheckOut = null;
-    totalBreakTime = Duration.zero;
+      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+      checkinDate = null;
+      lastCheckOut = null;
+      totalBreakTime = Duration.zero;
 
-    DateTime? lastCheckOutTime;
+      DateTime? lastCheckOutTime;
+      bool isAfter7pm = false;
 
-    for (var doc in docs) {
-      var data = doc.data() as Map<String, dynamic>;
-      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(data['dateTime']);
-      bool isCheckIn = data['check'];
+      for (var doc in docs) {
+        var data = doc.data() as Map<String, dynamic>;
+        DateTime dateTime =
+            DateTime.fromMillisecondsSinceEpoch(data['dateTime']);
+        bool isCheckIn = data['check'];
 
-      if (isCheckIn) {
-        checkinDate ??= dateTime;
-        if (lastCheckOutTime != null) {
-          totalBreakTime += dateTime.difference(lastCheckOutTime);
+        if (isCheckIn) {
+          checkinDate ??= dateTime;
+          if (lastCheckOutTime != null && !isAfter7pm) {
+            totalBreakTime += dateTime.difference(lastCheckOutTime);
+          }
+        } else {
+          lastCheckOut = dateTime;
+          lastCheckOutTime = dateTime;
         }
-      } else {
-        lastCheckOut = dateTime;
-        lastCheckOutTime = dateTime;
+
+        if (dateTime.hour >= 19) {
+          isAfter7pm = true;
+        } else if (dateTime.hour >= 9) {
+          isAfter7pm = false;
+        }
+      }
+
+      log("Total break time: $totalBreakTime");
+      notifyListeners();
+    } catch (e) {
+      log("Error in break_time: $e");
+    }
+  }
+
+  int getTotalWorkingDaysOfCurrentMonth() {
+    DateTime now = DateTime.now();
+    int year = now.year;
+    int month = now.month;
+
+    int totalDays = DateTime(year, month + 1, 0).day;
+    int workingDays = 0;
+
+    for (int day = 1; day <= totalDays; day++) {
+      DateTime date = DateTime(year, month, day);
+      if (date.weekday != DateTime.saturday &&
+          date.weekday != DateTime.sunday) {
+        workingDays++;
       }
     }
 
-    log("Total break time: $totalBreakTime");
-    notifyListeners();
+    return workingDays;
   }
 }

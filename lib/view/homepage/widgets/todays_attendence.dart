@@ -96,7 +96,7 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
                       children: [
                         Container(
                           height: 30,
-                          width: 30,
+                          width: 40,
                           decoration: BoxDecoration(
                               color: Colors.blue.withOpacity(.1),
                               borderRadius: BorderRadius.circular(10)),
@@ -171,16 +171,28 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          "00:30",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
+                        Consumer<HomeController>(
+                          builder: (context, value, child) {
+                            String formattedTime = '';
+
+                            if (value.totalBreakTime != null &&
+                                value.totalBreakTime != Duration.zero) {
+                              formattedTime = DateFormat("mm:ss").format(
+                                  DateTime(0).add(value.totalBreakTime));
+                            }
+
+                            return Text(
+                              formattedTime,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 30),
+                            );
+                          },
                         ),
                         SizedBox(
-                          width: 10,
+                          width: 5,
                         ),
                         Text(
-                          "min",
+                          "sec",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 25),
                         )
@@ -223,10 +235,17 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          "21",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
+                        Consumer<HomeController>(
+                          builder: (context, value, child) {
+                            int totaldays =
+                                value.getTotalWorkingDaysOfCurrentMonth();
+
+                            return Text(
+                              "$totaldays",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 30),
+                            );
+                          },
                         ),
                       ],
                     ),
