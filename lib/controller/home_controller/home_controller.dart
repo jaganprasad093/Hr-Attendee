@@ -1,51 +1,64 @@
 import 'dart:developer';
-
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeController with ChangeNotifier {
   HomeController() {
-    addcheckinListener();
+    initialize();
   }
+
   DateTime? lastCheckOut;
-  DateTime DateSelected = DateTime.now();
+  DateTime dateSelected = DateTime.now();
   DateTime? checkinDate;
   Duration totalBreakTime = Duration.zero;
+  DateTime get selectedDate => dateSelected;
+  StreamSubscription<QuerySnapshot>? subscription;
 
-  addcheckinListener() {
-    FirebaseFirestore.instance
+  void initialize() {
+    fetchDataForSelectedDate();
+    addCheckinListener();
+  }
+
+  void addCheckinListener() {
+    subscription?.cancel();
+    subscription = FirebaseFirestore.instance
         .collection('dates')
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .where("dateTime",
-            isGreaterThanOrEqualTo: DateSelected.millisecondsSinceEpoch)
+            isGreaterThanOrEqualTo: dateSelected.millisecondsSinceEpoch)
         .where("dateTime",
-            isLessThan: DateSelected.copyWith(day: DateSelected.day + 1))
+            isLessThan:
+                dateSelected.add(Duration(days: 1)).millisecondsSinceEpoch)
         .snapshots()
         .listen((event) {
-      getFirstCheckInOfDay();
-      getLastCheckInOfDay();
-      break_time();
-      getTotalWorkingDaysOfCurrentMonth();
+      log("data updated ");
+      fetchDataForSelectedDate();
     });
   }
 
-  Future<void> assignDate(int year, int month, int day) async {
-    DateSelected = DateTime(year, month, day);
-    getFirstCheckInOfDay();
-    getLastCheckInOfDay();
-    break_time();
+  Future<void> fetchDataForSelectedDate() async {
+    await getFirstCheckInOfDay();
+    await getLastCheckInOfDay();
+    await calculateBreakTime();
     getTotalWorkingDaysOfCurrentMonth();
     notifyListeners();
   }
 
-  addData(bool isSlide) {
-    log("data adding");
+  Future<void> assignDate(int year, int month, int day) async {
+    dateSelected = DateTime(year, month, day);
+    await fetchDataForSelectedDate();
+    addCheckinListener();
+  }
 
+  Future<void> addData(bool isSlide) async {
+    log("data adding");
     DateTime now = DateTime.now();
-    String formattedDateTime =
-        "${now.day}-${now.month}-${now.year} ${now.hour}:${now.minute}";
     FirebaseFirestore.instance.collection('dates').add({
       'dateTime': now.millisecondsSinceEpoch,
       "check": isSlide,
+      "userid": FirebaseAuth.instance.currentUser!.uid
     }).then((value) {
       log("Date and time added to Firestore!");
     }).catchError((error) {
@@ -54,27 +67,15 @@ class HomeController with ChangeNotifier {
     log("data added");
   }
 
-  // void fetchData() {
-  //   log("Fetching data");
-  //   FirebaseFirestore.instance.collection('dates').get().then((querySnapshot) {
-  //     querySnapshot.docs.forEach((doc) {
-  //       DateTime dateTime = doc['dateTime'].toDate();
-  //       String date = "${dateTime.day}-${dateTime.month}-${dateTime.year}";
-  //       String time = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
-  //       log("Date: $date, Time: $time");
-  //     });
-  //   }).catchError((error) {
-  //     log("Failed to fetch data: $error");
-  //   });
-  //}
-
   Future<void> getFirstCheckInOfDay() async {
-    DateTime now = DateTime.now();
-    DateTime startOfDay = DateTime(now.year, now.month, now.day);
-    DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+    DateTime startOfDay =
+        DateTime(dateSelected.year, dateSelected.month, dateSelected.day);
+    DateTime endOfDay = DateTime(dateSelected.year, dateSelected.month,
+        dateSelected.day, 23, 59, 59, 999);
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('dates')
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .where('check', isEqualTo: true)
         .where('dateTime',
             isGreaterThanOrEqualTo: startOfDay.millisecondsSinceEpoch)
@@ -86,26 +87,28 @@ class HomeController with ChangeNotifier {
     if (querySnapshot.docs.isNotEmpty) {
       var firstCheckIn =
           querySnapshot.docs.first.data() as Map<String, dynamic>;
-      bool checkin = firstCheckIn['check'];
-      log("check--$checkin");
       checkinDate =
           DateTime.fromMillisecondsSinceEpoch(firstCheckIn['dateTime']);
-      log("$checkinDate");
-      log("First check-in: $checkin at $checkinDate");
-      notifyListeners();
+      log("First check-in at $checkinDate");
     } else {
-      log("No check-in");
+      log("No check-in found");
+      checkinDate = null;
     }
   }
 
   Future<void> getLastCheckInOfDay() async {
+    DateTime startOfDay =
+        DateTime(dateSelected.year, dateSelected.month, dateSelected.day);
+    DateTime endOfDay = DateTime(dateSelected.year, dateSelected.month,
+        dateSelected.day, 23, 59, 59, 999);
+
     var querySnapshot = await FirebaseFirestore.instance
         .collection('dates')
-        .where("dateTime",
-            isGreaterThanOrEqualTo: DateSelected.millisecondsSinceEpoch)
-        .where("dateTime",
-            isLessThan: DateSelected.copyWith(day: DateSelected.day + 1))
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .where('check', isEqualTo: false)
+        .where('dateTime',
+            isGreaterThanOrEqualTo: startOfDay.millisecondsSinceEpoch)
+        .where('dateTime', isLessThanOrEqualTo: endOfDay.millisecondsSinceEpoch)
         .orderBy('dateTime', descending: true)
         .limit(1)
         .get();
@@ -113,17 +116,17 @@ class HomeController with ChangeNotifier {
     if (querySnapshot.docs.isNotEmpty) {
       lastCheckOut = DateTime.fromMillisecondsSinceEpoch(
           querySnapshot.docs.first.data()["dateTime"]);
-
-      notifyListeners();
     } else {
-      log("No check-in");
+      log("No check-out found");
+      lastCheckOut = null;
     }
   }
 
-  Future<void> break_time() async {
+  Future<void> calculateBreakTime() async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('dates')
+          .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .orderBy('dateTime', descending: false)
           .get();
 
@@ -134,7 +137,7 @@ class HomeController with ChangeNotifier {
 
       DateTime? lastCheckOutTime;
       bool isAfter7pm = false;
-
+      log(docs.length.toString());
       for (var doc in docs) {
         var data = doc.data() as Map<String, dynamic>;
         DateTime dateTime =
@@ -143,25 +146,29 @@ class HomeController with ChangeNotifier {
 
         if (isCheckIn) {
           checkinDate ??= dateTime;
+          log("first if ");
           if (lastCheckOutTime != null && !isAfter7pm) {
             totalBreakTime += dateTime.difference(lastCheckOutTime);
+            log("second if ");
           }
         } else {
+          log("first else ");
           lastCheckOut = dateTime;
           lastCheckOutTime = dateTime;
         }
 
         if (dateTime.hour >= 19) {
           isAfter7pm = true;
+          log("thrid if ");
         } else if (dateTime.hour >= 9) {
           isAfter7pm = false;
+          log("fourth if ");
         }
       }
 
       log("Total break time: $totalBreakTime");
-      notifyListeners();
     } catch (e) {
-      log("Error in break_time: $e");
+      log("Error in calculateBreakTime: $e");
     }
   }
 
@@ -169,7 +176,6 @@ class HomeController with ChangeNotifier {
     DateTime now = DateTime.now();
     int year = now.year;
     int month = now.month;
-
     int totalDays = DateTime(year, month + 1, 0).day;
     int workingDays = 0;
 

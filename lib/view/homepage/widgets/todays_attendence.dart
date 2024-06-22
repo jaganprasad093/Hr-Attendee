@@ -23,7 +23,7 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(vertical: 5),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 height: 100,
@@ -66,7 +66,7 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
                             }
                             log("check in--$date");
                             return Text(
-                              value.checkinDate != null ? date : "time",
+                              value.checkinDate != null ? date : "",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 30),
                             );
@@ -140,7 +140,7 @@ class _TodaysAttendenceState extends State<TodaysAttendence> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(vertical: 5),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 height: 100,

@@ -77,6 +77,7 @@ class registration_controller with ChangeNotifier {
       "lastname": registration_model.lastname,
       "email": registration_model.email,
       "password": registration_model.password,
+      "userid": FirebaseAuth.instance.currentUser!.uid
     };
 
     await collectionReference.doc(uid).set(data);
@@ -98,7 +99,6 @@ class registration_controller with ChangeNotifier {
       // }).toList();
       notifyListeners();
     }, onError: (error) {
-      // Handle errors here
       print("Error fetching snapshots: $error");
     });
   }
@@ -121,21 +121,20 @@ class registration_controller with ChangeNotifier {
     });
   }
 
-  Future<Registration_model?> fetchUserData(String uid) async {
-    try {
-      DocumentSnapshot doc = await collectionReference.doc(uid).get();
-      if (doc.exists) {
-        final data = doc.data() as Map<String, dynamic>;
-        return Registration_model(
-          firstname: data['firstname'],
-          lastname: data['lastname'],
-          email: data['email'],
-          password: data['password'],
-        );
-      }
-    } catch (e) {
-      print("Error fetching user data: $e");
-    }
-    return null;
+  fetchUserData() async {
+    collectionReference
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .snapshots()
+        .listen((event) {
+      users_list = event.docs
+          .map((e) => Registration_model(
+                firstname: e['firstname'],
+                lastname: e['lastname'],
+                email: e['email'],
+                password: e['password'],
+              ))
+          .toList();
+      notifyListeners();
+    });
   }
 }

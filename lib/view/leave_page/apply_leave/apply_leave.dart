@@ -30,8 +30,9 @@ class _ApplyLeaveState extends State<ApplyLeave> {
       builder: (_) {
         return AlertDialog(
           content: Container(
-            height: 230,
+            height: 260,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
                   height: 20,
@@ -45,7 +46,7 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   height: 10,
                 ),
                 Text(
-                  "Leave Applied\n   successfully",
+                  "Leave Applied\n  successfully",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -56,7 +57,7 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black.withOpacity(.5),
-                      fontSize: 15),
+                      fontSize: 10),
                 )
               ],
             ),
@@ -64,11 +65,12 @@ class _ApplyLeaveState extends State<ApplyLeave> {
           actions: [
             InkWell(
               onTap: () {
-                Navigator.push(
+                Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
                       builder: (context) => BottomNavigation(),
-                    ));
+                    ),
+                    (route) => false);
               },
               child: Container(
                 height: 50,
@@ -109,6 +111,7 @@ class _ApplyLeaveState extends State<ApplyLeave> {
             "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year.toString()}";
         controller.value = TextEditingValue(text: convertedDateTime);
       });
+      FocusScope.of(context).unfocus();
     }
   }
 
@@ -127,170 +130,177 @@ class _ApplyLeaveState extends State<ApplyLeave> {
           child: Icon(Icons.arrow_back),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Title',
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue)),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
                   ),
-                  onSaved: (String? value) {},
-                  validator: (String? value) {
-                    return (value == null || value.isEmpty)
-                        ? 'Please enter a title'
-                        : null;
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: leaveTypeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Leave type',
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue)),
-                  ),
-                  onSaved: (String? value) {},
-                  validator: (String? value) {
-                    return (value == null || value.isEmpty)
-                        ? 'Please enter the type of leave'
-                        : null;
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: contactController,
-                  decoration: const InputDecoration(
-                    labelText: 'Contact number',
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue)),
-                  ),
-                  onSaved: (String? value) {},
-                  validator: (String? value) {
-                    return (value == null ||
-                            value.isEmpty ||
-                            !RegExp(r'^[0-9]+$').hasMatch(value))
-                        ? 'Please enter a valid contact number'
-                        : null;
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: startDateController,
-                  decoration: const InputDecoration(
-                    suffixIcon: Icon(Icons.date_range_outlined),
-                    labelText: 'Start date',
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue)),
-                  ),
-                  readOnly: true,
-                  onTap: () => _selectDate(context, startDateController),
-                  onSaved: (String? value) {},
-                  validator: (String? value) {
-                    return (value == null || value.isEmpty)
-                        ? 'Please enter the start date'
-                        : null;
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: endDateController,
-                  decoration: const InputDecoration(
-                    labelText: 'End date',
-                    suffixIcon: Icon(Icons.date_range_outlined),
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue)),
-                  ),
-                  readOnly: true,
-                  onTap: () => _selectDate(context, endDateController),
-                  onSaved: (String? value) {},
-                  validator: (String? value) {
-                    return (value == null || value.isEmpty)
-                        ? 'Please enter the end date'
-                        : null;
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: reasonController,
-                  decoration: const InputDecoration(
-                    labelText: 'Reason',
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue)),
-                  ),
-                  onSaved: (String? value) {},
-                  validator: (String? value) {
-                    return (value == null || value.isEmpty)
-                        ? 'Please enter the reason for leave'
-                        : null;
-                  },
-                ),
-                SizedBox(
-                  height: 60,
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await context.read<leave_controller>().addData(LeaveModel(
-                            title: titleController.text,
-                            contact_no: int.tryParse(contactController.text),
-                            end_date: endDateController.text,
-                            start_date: startDateController.text,
-                            leave_type: leaveTypeController.text,
-                            reason: reasonController.text,
-                          ));
-                      log("sucess");
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text("sucess")));
-
-                      showDialogWithFields(context);
-                    } else {}
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 250,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(10),
+                  TextFormField(
+                    controller: titleController,
+                    decoration: const InputDecoration(
+                      labelText: 'Title',
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
                     ),
-                    child: Center(
-                      child: Text(
-                        "Apply leave",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                    onSaved: (String? value) {},
+                    validator: (String? value) {
+                      return (value == null || value.isEmpty)
+                          ? 'Please enter a title'
+                          : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: leaveTypeController,
+                    decoration: const InputDecoration(
+                      labelText: 'Leave type',
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                    ),
+                    onSaved: (String? value) {},
+                    validator: (String? value) {
+                      return (value == null || value.isEmpty)
+                          ? 'Please enter the type of leave'
+                          : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: contactController,
+                    decoration: const InputDecoration(
+                      labelText: 'Contact number',
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                    ),
+                    onSaved: (String? value) {},
+                    validator: (String? value) {
+                      return (value == null ||
+                              value.isEmpty ||
+                              !RegExp(r'^[0-9]+$').hasMatch(value))
+                          ? 'Please enter a valid contact number'
+                          : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: startDateController,
+                    decoration: const InputDecoration(
+                      suffixIcon: Icon(Icons.date_range_outlined),
+                      labelText: 'Start date',
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                    ),
+                    readOnly: true,
+                    onTap: () => _selectDate(context, startDateController),
+                    onSaved: (String? value) {},
+                    validator: (String? value) {
+                      return (value == null || value.isEmpty)
+                          ? 'Please enter the start date'
+                          : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: endDateController,
+                    decoration: const InputDecoration(
+                      labelText: 'End date',
+                      suffixIcon: Icon(Icons.date_range_outlined),
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                    ),
+                    readOnly: true,
+                    onTap: () => _selectDate(context, endDateController),
+                    onSaved: (String? value) {},
+                    validator: (String? value) {
+                      return (value == null || value.isEmpty)
+                          ? 'Please enter the end date'
+                          : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: reasonController,
+                    decoration: const InputDecoration(
+                      labelText: 'Reason',
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                    ),
+                    onSaved: (String? value) {},
+                    validator: (String? value) {
+                      return (value == null || value.isEmpty)
+                          ? 'Please enter the reason for leave'
+                          : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 60,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await context
+                            .read<leave_controller>()
+                            .addData(LeaveModel(
+                              title: titleController.text,
+                              contact_no: int.tryParse(contactController.text),
+                              end_date: endDateController.text,
+                              start_date: startDateController.text,
+                              leave_type: leaveTypeController.text,
+                              reason: reasonController.text,
+                            ));
+                        log("sucess");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text("sucess")));
+
+                        showDialogWithFields(context);
+                      } else {}
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Apply leave",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

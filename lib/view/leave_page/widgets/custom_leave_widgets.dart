@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
@@ -32,17 +34,17 @@ class Custom_leave_widgets extends StatelessWidget {
                         Text(
                           leaveModel.start_date ?? "",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                              fontWeight: FontWeight.bold, fontSize: 17),
                         ),
                         Text(
                           " to ",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                              fontWeight: FontWeight.bold, fontSize: 17),
                         ),
                         Text(
                           leaveModel.end_date ?? "",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                              fontWeight: FontWeight.bold, fontSize: 17),
                         ),
                       ],
                     ),
@@ -72,11 +74,15 @@ class Custom_leave_widgets extends StatelessWidget {
                       style: TextStyle(),
                     ),
                     Consumer<leave_controller>(
-                      builder: (context, value, child) => Text(
-                        "",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
+                      builder: (context, value, child) {
+                        log(" date diffence1:${value.dateDifference}");
+                        log(" date diffence:${value.datedifference}");
+                        return Text(
+                          "${value.calculateDateDifference(leaveModel)}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        );
+                      },
                     ),
                   ],
                 ),

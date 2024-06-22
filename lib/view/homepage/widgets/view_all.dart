@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/homepage/widgets/today_activity.dart';
 
@@ -29,6 +30,8 @@ class _View_allState extends State<View_all> {
               stream: FirebaseFirestore.instance
                   .collection('dates')
                   .orderBy("dateTime", descending: true)
+                  .where("userid",
+                      isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                   .snapshots(),
               builder: (context, snapshot) {
                 var date = snapshot.data;

@@ -30,88 +30,93 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           child: Icon(Icons.arrow_back_ios_new_outlined),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Form(
-            key: formKey, // Reference the formKey here
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20),
-                Text(
-                  "Forgot password",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-                ),
-                SizedBox(height: 10),
-                Text("Which contact details should we use to reset password"),
-                SizedBox(height: 50),
-                Image.network(
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTgDPHc9TIzPqEJ1EJ-32CQ7JZ7BdOxWHgAQ&s",
-                ),
-                SizedBox(height: 50),
-                TextFormField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    hintText: "Email address",
-                    border: OutlineInputBorder(
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Form(
+              key: formKey, // Reference the formKey here
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  Text(
+                    "Forgot password",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                  ),
+                  SizedBox(height: 10),
+                  Text("Which contact details should we use to reset password"),
+                  SizedBox(height: 50),
+                  Image.network(
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTgDPHc9TIzPqEJ1EJ-32CQ7JZ7BdOxWHgAQ&s",
+                  ),
+                  SizedBox(height: 50),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      hintText: "Email address",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the email address';
+                      }
+                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                        return "Enter a valid email address";
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(height: 80),
+                  Container(
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the email address';
-                    }
-                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                      return "Enter a valid email address";
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                SizedBox(height: 80),
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () {
-                        if (formKey.currentState!.validate()) {
-                          context.read<login_controller>();
-                          resetPassword(context);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Otp_verification(),
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: Colors.red,
-                              content: Text("Incorrect email address"),
-                            ),
-                          );
-                          log("failed");
-                        }
-                      },
-                      child: Text(
-                        "Continue",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                    child: Center(
+                      child: InkWell(
+                        onTap: () {
+                          if (formKey.currentState!.validate()) {
+                            context.read<login_controller>();
+                            resetPassword(context);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Otp_verification(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text("Incorrect email address"),
+                              ),
+                            );
+                            log("failed");
+                          }
+                        },
+                        child: Text(
+                          "Continue",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

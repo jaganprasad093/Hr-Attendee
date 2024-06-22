@@ -1,9 +1,13 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/view/leave_page/apply_leave/apply_leave.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/custom_leave_widgets.dart';
+import 'package:flutter_application_1/view/leave_page/widgets/filter_page.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/team_leave_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +25,7 @@ class _Leave_pageState extends State<Leave_page> {
   bool isCheckedSickLeave = false;
   bool isCheckedPlannedLeave = false;
   bool isCheckedHoliday = false;
+  bool isMorethan = false;
 
   int currentTabIndex = 0;
   @override
@@ -59,224 +64,240 @@ class _Leave_pageState extends State<Leave_page> {
             ),
           ],
         ),
-        body: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: SingleChildScrollView(
+          child: SizedBox(
+            height: 2000,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  height: 150,
-                  width: 180,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Stack(children: [
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 145,
-                        width: 175,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "Leave\nBalanace",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 150,
+                      width: 180,
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Stack(children: [
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            height: 145,
+                            width: 175,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  "Leave\nBalanace",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                      color: Colors.blue),
+                                )
+                              ],
                             ),
-                            Text(
-                              "0",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Colors.blue),
-                            )
-                          ],
+                          ),
                         ),
-                      ),
+                      ]),
                     ),
-                  ]),
+                    Container(
+                      height: 150,
+                      width: 180,
+                      decoration: BoxDecoration(
+                          color: Colors.yellow,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Stack(children: [
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            height: 145,
+                            width: 175,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  "Leave\nApproved",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                      color: Colors.yellow),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ]),
+                    )
+                  ],
                 ),
-                Container(
-                  height: 150,
-                  width: 180,
-                  decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Stack(children: [
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 145,
-                        width: 175,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "Leave\nApproved",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 150,
+                      width: 180,
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Stack(children: [
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            height: 145,
+                            width: 175,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  "Leave\nPending",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                Consumer<leave_controller>(
+                                  builder: (context, value, child) => Text(
+                                    value.LeaveList.length == null
+                                        ? "0"
+                                        : "${value.LeaveList.length}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: Colors.green),
+                                  ),
+                                )
+                              ],
                             ),
-                            Text(
-                              "0",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Colors.yellow),
-                            )
-                          ],
+                          ),
                         ),
-                      ),
+                      ]),
                     ),
-                  ]),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  height: 150,
-                  width: 180,
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Stack(children: [
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 145,
-                        width: 175,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "Leave\nPending",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
+                    Container(
+                      height: 150,
+                      width: 180,
+                      decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Stack(children: [
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            height: 145,
+                            width: 175,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  "Leave\nCancelled",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                      color: Colors.red),
+                                )
+                              ],
                             ),
-                            Consumer<leave_controller>(
-                              builder: (context, value, child) => Text(
-                                value.LeaveList.length == null
-                                    ? "0"
-                                    : "${value.LeaveList.length}",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
-                                    color: Colors.green),
+                          ),
+                        ),
+                      ]),
+                    )
+                  ],
+                ),
+                TabBar(
+                    onTap: (value) {
+                      setState(() {
+                        currentTabIndex = value;
+                      });
+                    },
+                    tabs: [
+                      Tab(
+                        text: "Upcoming",
+                      ),
+                      Tab(
+                        text: "Past",
+                      ),
+                      Tab(
+                        text: "Team Leave",
+                      ),
+                    ]),
+                Flexible(
+                  child: TabBarView(children: [
+                    Consumer<leave_controller>(
+                      builder: (context, value, child) => ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            log(value.LeaveList.length.toString());
+                            return Custom_leave_widgets(
+                              leaveModel: value.LeaveList[index],
+                            );
+                          },
+                          separatorBuilder: (context, index) => SizedBox(
+                                height: 10,
                               ),
-                            )
-                          ],
-                        ),
-                      ),
+                          itemCount: value.LeaveList.length),
                     ),
-                  ]),
-                ),
-                Container(
-                  height: 150,
-                  width: 180,
-                  decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Stack(children: [
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 145,
-                        width: 175,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "Leave\nCancelled",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
+                    Consumer<leave_controller>(
+                      builder: (context, value, child) => ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) => Custom_leave_widgets(
+                                leaveModel: value.LeaveList[index],
+                              ),
+                          separatorBuilder: (context, index) => SizedBox(
+                                height: 10,
+                              ),
+                          itemCount: value.LeaveList.length),
+                    ),
+                    ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) => TeamLeave_widgets(),
+                        separatorBuilder: (context, index) => SizedBox(
+                              height: 10,
                             ),
-                            Text(
-                              "0",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Colors.red),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                        itemCount: 3),
                   ]),
                 )
               ],
             ),
-            TabBar(
-                onTap: (value) {
-                  setState(() {
-                    currentTabIndex = value;
-                  });
-                },
-                tabs: [
-                  Tab(
-                    text: "Upcoming",
-                  ),
-                  Tab(
-                    text: "Past",
-                  ),
-                  Tab(
-                    text: "Team Leave",
-                  ),
-                ]),
-            Expanded(
-              child: TabBarView(children: [
-                Consumer<leave_controller>(
-                  builder: (context, value, child) => ListView.separated(
-                      itemBuilder: (context, index) {
-                        log(value.LeaveList.length.toString());
-                        return Custom_leave_widgets(
-                          leaveModel: value.LeaveList[index],
-                        );
-                      },
-                      separatorBuilder: (context, index) => SizedBox(
-                            height: 10,
-                          ),
-                      itemCount: value.LeaveList.length),
-                ),
-                Consumer<leave_controller>(
-                  builder: (context, value, child) => ListView.separated(
-                      itemBuilder: (context, index) => Custom_leave_widgets(
-                            leaveModel: value.LeaveList[index],
-                          ),
-                      separatorBuilder: (context, index) => SizedBox(
-                            height: 10,
-                          ),
-                      itemCount: value.LeaveList.length),
-                ),
-                ListView.separated(
-                    itemBuilder: (context, index) => TeamLeave_widgets(),
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 10,
-                        ),
-                    itemCount: 3),
-              ]),
-            )
-          ],
+          ),
         ),
       ),
     );
@@ -286,202 +307,250 @@ class _Leave_pageState extends State<Leave_page> {
   void showFilter() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          height: 550,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 30,
+      builder: (context) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return SingleChildScrollView(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              height: 600,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Filter",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Colors.blue,
+                          value: isMorethan,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isMorethan = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Apply leaves morethan 2",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
+                    ),
                     Text(
-                      "Filter",
+                      "Status",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(Icons.close),
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Colors.blue,
+                          value: isCheckedApproved,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedApproved = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Approved",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  "Status",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      activeColor: Colors.blue,
-                      value: isCheckedApproved,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isCheckedApproved = value!;
-                        });
-                      },
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Colors.blue,
+                          value: isCheckedUnapproved,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedUnapproved = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Unapproved",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Approved",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      activeColor: Colors.blue,
-                      value: isCheckedUnapproved,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isCheckedUnapproved = value!;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Unapproved",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      activeColor: Colors.blue,
-                      value: isCheckedPending,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isCheckedPending = value!;
-                        });
-                      },
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Colors.blue,
+                          value: isCheckedPending,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedPending = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Pending",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
                     Text(
-                      "Pending",
-                      style: TextStyle(fontSize: 20),
+                      "Leave Type",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-                  ],
-                ),
-                Text(
-                  "Leave Type",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      activeColor: Colors.blue,
-                      value: isCheckedSickLeave,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isCheckedSickLeave = value!;
-                        });
-                      },
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Colors.blue,
+                          value: isCheckedSickLeave,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedSickLeave = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Sick leave",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Sick leave",
-                      style: TextStyle(fontSize: 20),
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Colors.blue,
+                          value: isCheckedPlannedLeave,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedPlannedLeave = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Planned leave",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      activeColor: Colors.blue,
-                      value: isCheckedPlannedLeave,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isCheckedPlannedLeave = value!;
-                        });
-                      },
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: Colors.blue,
+                          value: isCheckedHoliday,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedHoliday = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Holiday",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Planned leave",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      activeColor: Colors.blue,
-                      value: isCheckedHoliday,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isCheckedHoliday = value!;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Holiday",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 150,
-                      child: Center(
-                        child: Text(
-                          "Reset",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isCheckedApproved = false;
+                              isCheckedUnapproved = false;
+                              isCheckedPending = false;
+                              isCheckedSickLeave = false;
+                              isCheckedPlannedLeave = false;
+                              isCheckedHoliday = false;
+                              isMorethan = false;
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 150,
+                            child: Center(
+                              child: Text(
+                                "Reset",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.blue,
+                            ),
                           ),
                         ),
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.blue,
-                      ),
-                    ),
-                    Container(
-                      height: 50,
-                      width: 150,
-                      child: Center(
-                        child: Text(
-                          "Apply",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                        InkWell(
+                          onTap: () {
+                            if (isMorethan == true) {
+                              context.read<leave_controller>().filterLeaves();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CustomFilterPage(),
+                                  ));
+                            } else {}
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 150,
+                            child: Center(
+                              child: Text(
+                                "Apply",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      ],
                     ),
+                    SizedBox(
+                      height: 30,
+                    )
                   ],
                 ),
-                SizedBox(
-                  height: 30,
-                )
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

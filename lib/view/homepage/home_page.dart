@@ -1,6 +1,5 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
@@ -23,7 +22,6 @@ class _HomepageState extends State<Homepage> {
   List<Map<String, String>> dateList = [];
   String? userName;
   bool isSlide = false;
-  bool isDateSelected = true;
 
   @override
   void initState() {
@@ -81,7 +79,7 @@ class _HomepageState extends State<Homepage> {
                             InkWell(
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: value.DateSelected.day ==
+                                    color: DateTime.now().day ==
                                             int.parse(dateList[index]['day']!)
                                         ? Colors.blue
                                         : Colors.grey.withOpacity(.1),
@@ -96,9 +94,22 @@ class _HomepageState extends State<Homepage> {
                                       dateList[index]['day']!,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 30),
+                                          fontSize: 30,
+                                          color: DateTime.now().day ==
+                                                  int.parse(
+                                                      dateList[index]['day']!)
+                                              ? Colors.white
+                                              : Colors.black),
                                     ),
-                                    Text(dateList[index]['date']!),
+                                    Text(
+                                      dateList[index]['date']!,
+                                      style: TextStyle(
+                                          color: DateTime.now().day ==
+                                                  int.parse(
+                                                      dateList[index]['day']!)
+                                              ? Colors.white
+                                              : Colors.black),
+                                    ),
                                     Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 30, vertical: 5)),
@@ -110,8 +121,6 @@ class _HomepageState extends State<Homepage> {
                                     DateTime.now().year,
                                     DateTime.now().month,
                                     int.parse(dateList[index]['day']!));
-
-                                // isDateSelected = !false;
                               },
                             ),
                             if (index < dateList.length - 1)
@@ -183,6 +192,8 @@ class _HomepageState extends State<Homepage> {
                       .collection('dates')
                       .orderBy("dateTime", descending: true)
                       .limit(4)
+                      .where("userid",
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                       .snapshots(),
                   builder: (context, snapshot) {
                     var date = snapshot.data;
@@ -210,7 +221,8 @@ class _HomepageState extends State<Homepage> {
 
   List<Map<String, String>> getDateList(int days) {
     List<Map<String, String>> dateList = [];
-    DateTime now = DateTime.now();
+    DateTime now = DateTime(DateTime.now().year, DateTime.now().month);
+
     DateFormat dayFormatter = DateFormat('dd');
     DateFormat dateFormatter = DateFormat('E');
 

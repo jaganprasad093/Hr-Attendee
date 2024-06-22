@@ -1,11 +1,15 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
-import 'package:flutter_application_1/view/leave_page/apply_leave/apply_leave.dart';
 
 class leave_controller with ChangeNotifier {
+  int datedifference = 0;
+
+  int get dateDifference => datedifference;
+  List<LeaveModel> filteredLeaveList = [];
   leave_controller() {
     fetchData();
   }
@@ -20,13 +24,17 @@ class leave_controller with ChangeNotifier {
       "start_date": leaveModel.start_date,
       "end_date": leaveModel.end_date,
       "reason": leaveModel.reason,
+      "userid": FirebaseAuth.instance.currentUser!.uid
     };
 
     await collectionReference.add(data);
   }
 
   fetchData() {
-    collectionReference.snapshots().listen((event) {
+    collectionReference
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .snapshots()
+        .listen((event) {
       //  log(event.docs.length);
       LeaveList = event.docs
           .map((e) => LeaveModel(
@@ -42,5 +50,46 @@ class leave_controller with ChangeNotifier {
     });
   }
 
-  ApplyLeave() {}
+  int? calculateDateDifference(LeaveModel leaveModel) {
+    if (leaveModel.start_date == null || leaveModel.end_date == null) {
+      log("Start date or end date is null");
+      return null;
+    }
+
+    try {
+      DateTime start = parseDate(leaveModel.start_date!);
+      DateTime end = parseDate(leaveModel.end_date!);
+
+      if (end.isBefore(start)) {
+        log("End date is before start date");
+        return null;
+      }
+
+      Duration difference = end.difference(start);
+      int datedifference = difference.inDays;
+
+      log("Difference in days: $datedifference");
+
+      this.datedifference = datedifference;
+      return datedifference;
+    } catch (e) {
+      log("Error parsing dates: $e");
+      return null;
+    }
+  }
+
+  DateTime parseDate(String dateString) {
+    List<String> parts = dateString.split('-');
+    int day = int.parse(parts[0]);
+    int month = int.parse(parts[1]);
+    int year = int.parse(parts[2]);
+    return DateTime(year, month, day);
+  }
+
+  filterLeaves() {
+    filteredLeaveList = LeaveList.where((leave) {
+      return (calculateDateDifference(leave) ?? 0) > 2;
+    }).toList();
+    notifyListeners();
+  }
 }
