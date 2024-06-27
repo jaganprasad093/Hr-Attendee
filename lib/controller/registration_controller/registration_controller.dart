@@ -1,17 +1,27 @@
+import 'dart:developer';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/registration_model/registration_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class registration_controller with ChangeNotifier {
   bool isLoading = false;
+  bool uploading = false;
   var collectionReference = FirebaseFirestore.instance.collection("users");
+
   Registration_model? user;
   List<Registration_model> users_list = [];
+  final ImagePicker picker = ImagePicker();
+
+  File? selectedFile;
+
   registration_controller() {
     addRegisterListener();
-    addUsersList();
+    // addUsersList();
   }
+
   Future<bool> register({
     required BuildContext context,
     required String firstname,
@@ -44,24 +54,19 @@ class registration_controller with ChangeNotifier {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.red,
             content: Text("The password provided is too weak.")));
-        isLoading = false;
-        notifyListeners();
-        return false;
       } else if (e.code == 'email-already-in-use') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.red,
             content: Text("The account already exists for that email.")));
-        // print('The account already exists for that email.');
-        isLoading = false;
-        notifyListeners();
-        return false;
       }
+      isLoading = false;
+      notifyListeners();
+      return false;
     } catch (e) {
-      print(e);
+      log(e.toString());
       isLoading = false;
       notifyListeners();
       return false;
@@ -71,12 +76,13 @@ class registration_controller with ChangeNotifier {
     return false;
   }
 
-  Future addData(Registration_model registration_model, String uid) async {
+  Future<void> addData(Registration_model registrationModel, String uid) async {
     final data = {
-      "firstname": registration_model.firstname,
-      "lastname": registration_model.lastname,
-      "email": registration_model.email,
-      "password": registration_model.password,
+      "firstname": registrationModel.firstname,
+      "lastname": registrationModel.lastname,
+      "email": registrationModel.email,
+      "password": registrationModel.password,
+      "image": registrationModel.image,
       "userid": FirebaseAuth.instance.currentUser!.uid
     };
 
@@ -84,23 +90,25 @@ class registration_controller with ChangeNotifier {
   }
 
   void addRegisterListener() {
-    collectionReference
-        .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
-        .snapshots()
-        .listen((event) {
-      // user= event.docs.map((e) {
-      final data = event.data();
-      user = Registration_model(
-        firstname: data?["firstname"] as String? ?? '',
-        lastname: data?["lastname"] as String? ?? '',
-        email: data?["email"],
-        password: data?["password"] as String? ?? '',
-      );
-      // }).toList();
-      notifyListeners();
-    }, onError: (error) {
-      print("Error fetching snapshots: $error");
-    });
+    if (FirebaseAuth.instance.currentUser != null) {
+      collectionReference
+          .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
+          .snapshots()
+          .listen((event) {
+        final data = event.data();
+        if (data != null) {
+          user = Registration_model(
+            firstname: data["firstname"] as String? ?? '',
+            lastname: data["lastname"] as String? ?? '',
+            email: data["email"],
+            password: data["password"] as String? ?? '',
+          );
+        }
+        notifyListeners();
+      }, onError: (error) {
+        log("Error fetching snapshots: $error");
+      });
+    }
   }
 
   void addUsersList() {
@@ -114,16 +122,17 @@ class registration_controller with ChangeNotifier {
           password: data?["password"] as String? ?? '',
         );
       }).toList();
+      log("Fetched ${users_list.length} users");
       notifyListeners();
     }, onError: (error) {
-      // Handle errors here
-      print("Error fetching snapshots: $error");
+      log("Error fetching snapshots: $error");
     });
   }
 
-  fetchUserData() async {
+  Future<void> fetchUserData() async {
     collectionReference
         .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .orderBy("users", descending: true)
         .snapshots()
         .listen((event) {
       users_list = event.docs
@@ -136,5 +145,33 @@ class registration_controller with ChangeNotifier {
           .toList();
       notifyListeners();
     });
+  }
+
+  Future<void> pickImageFromCamera() async {
+    final XFile? img = await picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 400,
+    );
+    if (img != null) {
+      selectedFile = File(img.path);
+      notifyListeners();
+    }
+  }
+
+  Future<void> pickImageFromGallery() async {
+    final XFile? img = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 400,
+    );
+    if (img != null) {
+      selectedFile = File(img.path);
+      notifyListeners();
+    }
+  }
+
+  void resetData() {
+    users_list.clear();
+    user = null;
+    notifyListeners();
   }
 }

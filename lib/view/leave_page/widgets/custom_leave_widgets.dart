@@ -94,7 +94,7 @@ class Custom_leave_widgets extends StatelessWidget {
                       style: TextStyle(),
                     ),
                     Text(
-                      "2",
+                      "0",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -108,7 +108,7 @@ class Custom_leave_widgets extends StatelessWidget {
                       style: TextStyle(),
                     ),
                     Text(
-                      "dfghj",
+                      "g k",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),

@@ -2,12 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
+import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/controller/login_controller/login_controller.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
 import 'package:flutter_application_1/view/bottom_navigation/bottom_navigation.dart';
 import 'package:flutter_application_1/view/login_page/forgot_password/forgot_password.dart';
 import 'package:flutter_application_1/view/registerpage/register.dart';
 import 'package:provider/provider.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginpage extends StatefulWidget {
@@ -28,7 +31,7 @@ class _LoginpageState extends State<Loginpage> {
     super.initState();
     if (kDebugMode) {
       emailController.text = 'jaganprasad093@gmail.com';
-      passwordController.text = '12345678';
+      passwordController.text = '123456';
     }
   }
 
@@ -133,11 +136,9 @@ class _LoginpageState extends State<Loginpage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  Consumer<registration_controller>(
-                                builder: (context, value, child) =>
-                                    ForgotPassword(),
-                              ),
+                              builder: (context) => ChangeNotifierProvider(
+                                  create: (context) => login_controller(),
+                                  child: ForgotPassword()),
                             ),
                           );
                         },
@@ -162,9 +163,19 @@ class _LoginpageState extends State<Loginpage> {
                             .then((value) async {
                           log("value:$value");
                           if (value == true) {
+                            // Provider.of<leave_controller>(context,
+                            //         listen: false)
+                            //     .resetData();
+                            // Provider.of<HomeController>(context, listen: false)
+                            //     .resetState();
+                            // Provider.of<registration_controller>(context,
+                            //         listen: false)
+                            //     .resetData();
+
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             await prefs.setBool('isLoggedIn', true);
+
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               backgroundColor: Colors.green,
                               content: Text("Login success"),
@@ -218,7 +229,10 @@ class _LoginpageState extends State<Loginpage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Registerpage(),
+                              builder: (context) => ChangeNotifierProvider(
+                                  create: (context) =>
+                                      registration_controller(),
+                                  child: Registerpage()),
                             ),
                           );
                         },
@@ -286,7 +300,23 @@ class _LoginpageState extends State<Loginpage> {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BottomNavigation(),
+                      builder: (context) => MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider(
+                              create: (BuildContext context) {
+                                return HomeController();
+                              },
+                            ),
+                            ChangeNotifierProvider(
+                              create: (context) => registration_controller(),
+                            ),
+                            ChangeNotifierProvider(
+                              create: (context) => leave_controller(),
+                            ),
+                          ],
+                          child: BottomNavigation(
+                            initialIndex: 0,
+                          )),
                     ),
                     (route) => false);
               },

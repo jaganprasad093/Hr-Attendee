@@ -22,11 +22,26 @@ class _HomepageState extends State<Homepage> {
   List<Map<String, String>> dateList = [];
   String? userName;
   bool isSlide = false;
+  GlobalKey todays_widgetskey = GlobalKey();
+  ScrollController date_list_scrollcontroller = ScrollController();
+  scrolltochild() {
+    final context = todays_widgetskey.currentContext;
+    if (context != null) {
+      final box = context.findRenderObject() as RenderBox;
+      final offset = box.localToGlobal(Offset.zero,
+          ancestor: context.findRenderObject()?.parent as RenderObject);
+      date_list_scrollcontroller.animateTo(offset.dx,
+          duration: Duration(seconds: 1), curve: Curves.easeInOut);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     dateList = getDateList(30);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) => scrolltochild(),
+    );
   }
 
   @override
@@ -69,6 +84,7 @@ class _HomepageState extends State<Homepage> {
               ),
               SliverToBoxAdapter(
                 child: SingleChildScrollView(
+                  controller: date_list_scrollcontroller,
                   padding: EdgeInsets.symmetric(vertical: 20),
                   scrollDirection: Axis.horizontal,
                   child: Consumer<HomeController>(
@@ -78,6 +94,10 @@ class _HomepageState extends State<Homepage> {
                           children: [
                             InkWell(
                               child: Container(
+                                key: DateTime.now().day ==
+                                        int.parse(dateList[index]['day']!)
+                                    ? todays_widgetskey
+                                    : null,
                                 decoration: BoxDecoration(
                                     color: DateTime.now().day ==
                                             int.parse(dateList[index]['day']!)

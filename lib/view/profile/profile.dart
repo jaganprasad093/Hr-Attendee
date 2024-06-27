@@ -1,8 +1,16 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
+import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
+import 'package:flutter_application_1/model/registration_model/registration_model.dart';
+import 'package:flutter_application_1/view/bottom_navigation/bottom_navigation.dart';
 import 'package:flutter_application_1/view/login_page/loginpage.dart';
 import 'package:flutter_application_1/view/profile/personal_information/personal_information.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,13 +22,35 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  XFile? files;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider(
+                    create: (BuildContext context) {
+                      return HomeController();
+                    },
+                    child: MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider(
+                            create: (context) => registration_controller(),
+                          ),
+                          ChangeNotifierProvider(
+                            create: (context) => leave_controller(),
+                          ),
+                        ],
+                        child: BottomNavigation(
+                          initialIndex: 0,
+                        )),
+                  ),
+                ));
           },
           child: Icon(Icons.arrow_back_ios),
         ),
@@ -33,34 +63,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 20),
             Center(
               child: Stack(children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&w=600"),
-                  radius: 60,
-                  backgroundColor: Colors.grey.withOpacity(0.6),
-                  // child: Icon(
-                  //   Icons.person,
-                  //   size: 60,
-                  //   color: Colors.white,
-                  // ),
+                Consumer<registration_controller>(
+                  builder: (context, value, child) => CircleAvatar(
+                    // backgroundImage: value.selectedFile !=null? FileImage(value.selectedFile),
+
+                    radius: 60,
+                    backgroundColor: Colors.grey.withOpacity(0.6),
+                  ),
                 ),
                 Positioned(
                     bottom: 1,
                     right: 1,
-                    child: Icon(
-                      Icons.camera_alt_outlined,
-                      size: 40,
-                      color: Colors.white,
+                    child: InkWell(
+                      onTap: () {
+                        context
+                            .read<registration_controller>()
+                            .pickImageFromGallery();
+                      },
+                      child: Icon(
+                        Icons.camera_alt_outlined,
+                        size: 40,
+                        color: Colors.white,
+                      ),
                     )),
               ]),
             ),
             SizedBox(height: 10),
             Consumer<registration_controller>(
-              builder: (context, value, child) => Text(
-                context.read<registration_controller>().user?.firstname ??
-                    "Name",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              builder: (context, value, child) {
+                log("name--${context.read<registration_controller>().user!.firstname}");
+                return Text(
+                  context.read<registration_controller>().user?.firstname ??
+                      "Name",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                );
+              },
             ),
             Text("Description"),
             SizedBox(height: 20),
@@ -74,7 +111,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PersonalInformation(),
+                          builder: (cpx) => ChangeNotifierProvider.value(
+                              value: context.read<registration_controller>(),
+                              child: PersonalInformation()),
                         ));
                   },
                   child: Container(
@@ -222,7 +261,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () async {
                     try {
                       await FirebaseAuth.instance.signOut();
-
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       await prefs.setBool('isLoggedIn', false);

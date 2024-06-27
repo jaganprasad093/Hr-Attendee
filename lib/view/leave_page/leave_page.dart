@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
+import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
+import 'package:flutter_application_1/model/leave_model/leave_model.dart';
 import 'package:flutter_application_1/view/leave_page/apply_leave/apply_leave.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/custom_leave_widgets.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/filter_page.dart';
+import 'package:flutter_application_1/view/leave_page/widgets/leave_details.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/team_leave_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -136,12 +139,14 @@ class _Leave_pageState extends State<Leave_page> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
                                 ),
-                                Text(
-                                  "0",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.yellow),
+                                Consumer<leave_controller>(
+                                  builder: (context, value, child) => Text(
+                                    "0",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: Colors.yellow),
+                                  ),
                                 )
                               ],
                             ),
@@ -184,9 +189,9 @@ class _Leave_pageState extends State<Leave_page> {
                                 ),
                                 Consumer<leave_controller>(
                                   builder: (context, value, child) => Text(
-                                    value.LeaveList.length == null
+                                    value.upcomming_list.length == null
                                         ? "0"
-                                        : "${value.LeaveList.length}",
+                                        : "${value.upcomming_list.length}",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 30,
@@ -224,12 +229,14 @@ class _Leave_pageState extends State<Leave_page> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
                                 ),
-                                Text(
-                                  "0",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.red),
+                                Consumer(
+                                  builder: (context, value, child) => Text(
+                                    "0",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: Colors.red),
+                                  ),
                                 )
                               ],
                             ),
@@ -239,7 +246,11 @@ class _Leave_pageState extends State<Leave_page> {
                     )
                   ],
                 ),
+                SizedBox(
+                  height: 10,
+                ),
                 TabBar(
+                    indicatorColor: Colors.white,
                     onTap: (value) {
                       setState(() {
                         currentTabIndex = value;
@@ -247,52 +258,131 @@ class _Leave_pageState extends State<Leave_page> {
                     },
                     tabs: [
                       Tab(
-                        text: "Upcoming",
+                        child: Container(
+                          height: 50,
+                          width: 100,
+                          child: Center(
+                              child: Text(
+                            "Upcpming",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: currentTabIndex == 0
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          )),
+                          decoration: BoxDecoration(
+                              color: currentTabIndex == 0
+                                  ? Colors.blue
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
                       ),
                       Tab(
-                        text: "Past",
+                        child: Container(
+                          height: 50,
+                          width: 100,
+                          child: Center(
+                              child: Text(
+                            "Past",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: currentTabIndex == 1
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          )),
+                          decoration: BoxDecoration(
+                              color: currentTabIndex == 1
+                                  ? Colors.blue
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
                       ),
                       Tab(
-                        text: "Team Leave",
+                        child: Container(
+                          height: 50,
+                          width: 100,
+                          child: Center(
+                              child: Text(
+                            "Team leave",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: currentTabIndex == 2
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          )),
+                          decoration: BoxDecoration(
+                              color: currentTabIndex == 2
+                                  ? Colors.blue
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
                       ),
                     ]),
                 Flexible(
                   child: TabBarView(children: [
                     Consumer<leave_controller>(
-                      builder: (context, value, child) => ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            log(value.LeaveList.length.toString());
-                            return Custom_leave_widgets(
-                              leaveModel: value.LeaveList[index],
-                            );
-                          },
-                          separatorBuilder: (context, index) => SizedBox(
-                                height: 10,
-                              ),
-                          itemCount: value.LeaveList.length),
+                      builder: (context, value, child) {
+                        return ListView.separated(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              log("upcoming leave-- ${value.upcomming_list.length}");
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LeaveDetails(
+                                            leaveModel:
+                                                value.upcomming_list[index],
+                                          ),
+                                        ));
+                                  },
+                                  child: Custom_leave_widgets(
+                                    leaveModel: value.upcomming_list[index],
+                                  ),
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) => SizedBox(
+                                  height: 2,
+                                ),
+                            itemCount: value.upcomming_list.length);
+                      },
                     ),
                     Consumer<leave_controller>(
                       builder: (context, value, child) => ListView.separated(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) => Custom_leave_widgets(
-                                leaveModel: value.LeaveList[index],
+                                leaveModel: value.past_list[index],
                               ),
                           separatorBuilder: (context, index) => SizedBox(
                                 height: 10,
                               ),
-                          itemCount: value.LeaveList.length),
+                          itemCount: value.past_list.length),
                     ),
-                    ListView.separated(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) => TeamLeave_widgets(),
-                        separatorBuilder: (context, index) => SizedBox(
-                              height: 10,
-                            ),
-                        itemCount: 3),
+                    Consumer<leave_controller>(
+                      builder: (context, value, child) {
+                        log("teamleavelist-- ${value.teamLeaveList.length}");
+                        return ListView.separated(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => TeamLeave_widgets(
+                                  leaveModel: value.teamLeaveList[index],
+                                ),
+                            separatorBuilder: (context, index) => SizedBox(
+                                  height: 10,
+                                ),
+                            itemCount: value.teamLeaveList.length);
+                      },
+                    ),
                   ]),
                 )
               ],
@@ -512,7 +602,10 @@ class _Leave_pageState extends State<Leave_page> {
                         ),
                         InkWell(
                           onTap: () {
-                            if (isMorethan == true) {
+                            if (isMorethan == true ||
+                                isCheckedSickLeave == true ||
+                                isCheckedHoliday == true ||
+                                isCheckedPlannedLeave == true) {
                               context.read<leave_controller>().filterLeaves();
                               Navigator.push(
                                   context,

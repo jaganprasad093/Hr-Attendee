@@ -20,6 +20,7 @@ class _RegisterpageState extends State<Registerpage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController repasswordController = TextEditingController();
   bool invisible = true;
+  bool invisible2 = true;
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -104,9 +105,13 @@ class _RegisterpageState extends State<Registerpage> {
                       ),
                     ),
                     validator: (String? value) {
-                      return (value == null || value.isEmpty)
-                          ? 'Please enter the email'
-                          : null;
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the email address';
+                      }
+                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                        return "Enter a valid email address";
+                      }
+                      return null;
                     },
                   ),
                   SizedBox(height: 20),
@@ -138,16 +143,16 @@ class _RegisterpageState extends State<Registerpage> {
                   SizedBox(height: 20),
                   TextFormField(
                     controller: repasswordController,
-                    obscureText: invisible,
+                    obscureText: invisible2,
                     decoration: InputDecoration(
                       hintText: "Re-enter password",
                       suffixIcon: GestureDetector(
                         onTap: () {
                           setState(() {
-                            invisible = !invisible;
+                            invisible2 = !invisible2;
                           });
                         },
-                        child: Icon(invisible
+                        child: Icon(invisible2
                             ? Icons.visibility
                             : Icons.visibility_off),
                       ),

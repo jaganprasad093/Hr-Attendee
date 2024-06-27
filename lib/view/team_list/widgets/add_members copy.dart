@@ -1,19 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/controller/teamlist_controller/teamlist_controller.dart';
 import 'package:flutter_application_1/model/registration_model/registration_model.dart';
-import 'package:flutter_application_1/model/team_model/team_mode.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'package:provider/provider.dart';
-
-class AddMember_withAdd extends StatefulWidget {
-  const AddMember_withAdd({super.key, required this.registrationModel});
+class AddMember_withCall extends StatelessWidget {
+  const AddMember_withCall({super.key, required this.registrationModel});
   final Registration_model registrationModel;
 
-  @override
-  State<AddMember_withAdd> createState() => _AddMember_withAddState();
-}
-
-class _AddMember_withAddState extends State<AddMember_withAdd> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,11 +32,11 @@ class _AddMember_withAddState extends State<AddMember_withAdd> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.registrationModel.firstname ?? "",
+                    registrationModel.firstname ?? "",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   Text(
-                    widget.registrationModel.email ?? "",
+                    registrationModel.email ?? "",
                     style: TextStyle(),
                   ),
                 ],
@@ -50,35 +44,13 @@ class _AddMember_withAddState extends State<AddMember_withAdd> {
               Spacer(),
               PopupMenuButton(
                 onSelected: (value) async {
-                  if (value == 'add') {
-                    final registrationModel = widget.registrationModel;
-                    final teamlistController =
-                        Provider.of<TeamlistController>(context, listen: false);
-
-                    if (registrationModel != null) {
-                      final teamModel = TeamModel(
-                        team_list: registrationModel.firstname ?? 'Unknown',
-                      );
-
-                      try {
-                        await teamlistController.addData(teamModel);
-                        teamlistController.addMember(registrationModel);
-                      } catch (e) {
-                        print('Failed to add data: $e');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to add member')),
-                        );
-                      }
-                    } else {
-                      print('Registration model is null');
-                    }
-                  }
+                  launchPhoneDialer("+919400130828");
                 },
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
-                      value: 'add',
-                      child: Text("Add"),
+                      value: 'call',
+                      child: Text("Call"),
                     ),
                   ];
                 },
@@ -92,5 +64,16 @@ class _AddMember_withAddState extends State<AddMember_withAdd> {
         borderRadius: BorderRadius.circular(14),
       ),
     );
+  }
+
+  Future<void> launchPhoneDialer(String contactNumber) async {
+    final Uri _phoneUri = Uri(scheme: "tel", path: contactNumber);
+    try {
+      if (await canLaunch(_phoneUri.toString()))
+        await launch(_phoneUri.toString());
+    } catch (error) {
+      log("cannot dial");
+      throw ("Cannot dial");
+    }
   }
 }

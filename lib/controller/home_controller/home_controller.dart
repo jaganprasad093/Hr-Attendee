@@ -89,6 +89,7 @@ class HomeController with ChangeNotifier {
           querySnapshot.docs.first.data() as Map<String, dynamic>;
       checkinDate =
           DateTime.fromMillisecondsSinceEpoch(firstCheckIn['dateTime']);
+      notifyListeners();
       log("First check-in at $checkinDate");
     } else {
       log("No check-in found");
@@ -116,6 +117,7 @@ class HomeController with ChangeNotifier {
     if (querySnapshot.docs.isNotEmpty) {
       lastCheckOut = DateTime.fromMillisecondsSinceEpoch(
           querySnapshot.docs.first.data()["dateTime"]);
+      notifyListeners();
     } else {
       log("No check-out found");
       lastCheckOut = null;
@@ -134,7 +136,6 @@ class HomeController with ChangeNotifier {
       checkinDate = null;
       lastCheckOut = null;
       totalBreakTime = Duration.zero;
-
       DateTime? lastCheckOutTime;
       bool isAfter7pm = false;
       log(docs.length.toString());
@@ -188,5 +189,11 @@ class HomeController with ChangeNotifier {
     }
 
     return workingDays;
+  }
+
+  void resetState() {
+    lastCheckOut = null;
+    checkinDate = null;
+    totalBreakTime = Duration.zero;
   }
 }

@@ -1,7 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/model/leave_model/leave_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class TeamLeave_widgets extends StatelessWidget {
-  const TeamLeave_widgets({super.key});
+class TeamLeave_widgets extends StatefulWidget {
+  final LeaveModel leaveModel;
+  const TeamLeave_widgets({super.key, required this.leaveModel});
+
+  @override
+  State<TeamLeave_widgets> createState() => _TeamLeave_widgetsState();
+}
+
+class _TeamLeave_widgetsState extends State<TeamLeave_widgets> {
+  final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+  late Future<int> _reject;
+  var accept = 0;
+  // reject() async {
+  //   SharedPreferences preff = await SharedPreferences.getInstance();
+  //   await preff.setInt('leave_balance', 17);
+  //   await preff.setInt('planned_leave', 7);
+  //   await preff.setInt('sick_leave', 10);
+  //   final int reject = preff.getInt('leave_balance')! - 1;
+  //   setState(() {
+  //     // _reject = preff.setInt("leave_balance", reject).then(bool sucess){
+  //     //   return reject;
+  //     // };
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +57,7 @@ class TeamLeave_widgets extends StatelessWidget {
                       style: TextStyle(),
                     ),
                     Text(
-                      "Mar 4,2023-Mar 7,2023",
+                      "${widget.leaveModel.start_date} to ${widget.leaveModel.end_date}",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -44,33 +68,43 @@ class TeamLeave_widgets extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  child: Center(
-                      child: Text(
-                    "Reject",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20),
-                  )),
-                  decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10)),
+                InkWell(
+                  onTap: () async {
+                    setState(() {});
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    child: Center(
+                        child: Text(
+                      "Reject",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20),
+                    )),
+                    decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  child: Center(
-                      child: Text(
-                    "Accept",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20),
-                  )),
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(10)),
+                InkWell(
+                  onTap: () {
+                    accept++;
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    child: Center(
+                        child: Text(
+                      "Accept",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20),
+                    )),
+                    decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
               ],
             )

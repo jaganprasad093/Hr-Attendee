@@ -6,13 +6,20 @@ import 'package:flutter_application_1/view/leave_page/leave_page.dart';
 import 'package:flutter_application_1/view/team_list/team_list.dart';
 
 class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key});
+  final int initialIndex;
+  const BottomNavigation({super.key, required this.initialIndex});
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = widget.initialIndex;
+  }
+
   final List<Widget> listscreen = [
     Homepage(),
     Leave_page(),
@@ -20,6 +27,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
     HolidayList(),
     ProfileScreen(),
   ];
+  void navigateToTeam() {
+    setState(() {
+      selectedIndex = 2;
+    });
+  }
 
   int selectedIndex = 0;
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
-import 'package:flutter_application_1/model/registration_model/registration_model.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_documents.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_information_widget.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/proffestional_informations.dart';
@@ -42,23 +41,80 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 },
                 tabs: [
                   Tab(
-                    text: "Personal",
+                    child: Container(
+                      height: 50,
+                      width: 100,
+                      child: Center(
+                          child: Text(
+                        "Personal",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: currentTabIndex == 0
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      )),
+                      decoration: BoxDecoration(
+                          color:
+                              currentTabIndex == 0 ? Colors.blue : Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
                   ),
                   Tab(
-                    text: "Proffestional",
+                    child: Container(
+                      height: 50,
+                      width: 100,
+                      child: Center(
+                          child: Text(
+                        "Proffestional",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: currentTabIndex == 1
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      )),
+                      decoration: BoxDecoration(
+                          color:
+                              currentTabIndex == 1 ? Colors.blue : Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
                   ),
                   Tab(
-                    text: "Documents",
+                    child: Container(
+                      height: 50,
+                      width: 110,
+                      child: Center(
+                          child: Text(
+                        "Documents",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: currentTabIndex == 2
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      )),
+                      decoration: BoxDecoration(
+                          color:
+                              currentTabIndex == 2 ? Colors.blue : Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
                   ),
                 ]),
             Expanded(
               child: TabBarView(children: [
                 Consumer<registration_controller>(
-                  builder: (context, value, child) =>
-                      Custom_PersonalInformation(
-                    registrationmodel: value.users_list[1],
-                  ),
-                ),
+                    builder: (context, value, child) {
+                  if (value.users_list.length > 1) {
+                    return Custom_PersonalInformation(
+                      registrationmodel: value.users_list[1],
+                    );
+                  } else {
+                    return Center(
+                      child: Text("Not enough data available"),
+                    );
+                  }
+                }),
                 Consumer<registration_controller>(
                     builder: (context, value, child) =>
                         Proffestional_informations()),
@@ -68,7 +124,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                     separatorBuilder: (context, index) => SizedBox(
                           height: 10,
                         ),
-                    itemCount: 3),
+                    itemCount: 2),
               ]),
             )
           ],

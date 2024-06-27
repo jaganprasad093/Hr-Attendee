@@ -1,7 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
 import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
+import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
 import 'package:flutter_application_1/view/bottom_navigation/bottom_navigation.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +24,13 @@ class _ApplyLeaveState extends State<ApplyLeave> {
   TextEditingController endDateController = TextEditingController();
   TextEditingController reasonController = TextEditingController();
   DateTime selectedDate = DateTime.now();
+  String? selectedLeaveType;
 
   final _formKey = GlobalKey<FormState>();
+  final List<String> leavetype_list = [
+    "Sick leave",
+    "Planned leave",
+  ];
 
   void showDialogWithFields(BuildContext context) {
     showDialog(
@@ -65,12 +73,27 @@ class _ApplyLeaveState extends State<ApplyLeave> {
           actions: [
             InkWell(
               onTap: () {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BottomNavigation(),
-                    ),
-                    (route) => false);
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                  builder: (context) {
+                    return MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider(
+                            create: (BuildContext context) {
+                              return HomeController();
+                            },
+                          ),
+                          ChangeNotifierProvider(
+                            create: (context) => registration_controller(),
+                          ),
+                          ChangeNotifierProvider(
+                            create: (context) => leave_controller(),
+                          ),
+                        ],
+                        child: BottomNavigation(
+                          initialIndex: 1,
+                        ));
+                  },
+                ), (route) => false);
               },
               child: Container(
                 height: 50,
@@ -148,8 +171,10 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                     controller: titleController,
                     decoration: const InputDecoration(
                       labelText: 'Title',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
                     ),
                     onSaved: (String? value) {},
@@ -162,18 +187,32 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   SizedBox(
                     height: 20,
                   ),
-                  TextFormField(
-                    controller: leaveTypeController,
+                  DropdownButtonFormField(
                     decoration: const InputDecoration(
                       labelText: 'Leave type',
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue)),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
                     ),
+                    value: selectedLeaveType,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedLeaveType = newValue;
+                      });
+                    },
+                    items: leavetype_list
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                     onSaved: (String? value) {},
                     validator: (String? value) {
                       return (value == null || value.isEmpty)
-                          ? 'Please enter the type of leave'
+                          ? 'Please select the type of leave'
                           : null;
                     },
                   ),
@@ -186,16 +225,18 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                       labelText: 'Contact number',
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
                     ),
                     onSaved: (String? value) {},
                     validator: (String? value) {
                       return (value == null ||
                               value.isEmpty ||
-                              !RegExp(r'^[0-9]+$').hasMatch(value))
-                          ? 'Please enter a valid contact number'
+                              !RegExp(r'^[0-9]{10}$').hasMatch(value))
+                          ? 'Please enter a valid 10-digit contact number'
                           : null;
                     },
+                    keyboardType: TextInputType.number,
                   ),
                   SizedBox(
                     height: 20,
@@ -207,6 +248,7 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                       labelText: 'Start date',
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
                     ),
                     readOnly: true,
@@ -228,6 +270,7 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                       suffixIcon: Icon(Icons.date_range_outlined),
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
                     ),
                     readOnly: true,
@@ -243,11 +286,17 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                     height: 20,
                   ),
                   TextFormField(
+                    textAlignVertical: TextAlignVertical.top,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
                     controller: reasonController,
                     decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 40.0, horizontal: 10.0),
                       labelText: 'Reason',
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
                     ),
                     onSaved: (String? value) {},
@@ -270,7 +319,7 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                               contact_no: int.tryParse(contactController.text),
                               end_date: endDateController.text,
                               start_date: startDateController.text,
-                              leave_type: leaveTypeController.text,
+                              leave_type: selectedLeaveType,
                               reason: reasonController.text,
                             ));
                         log("sucess");

@@ -5,13 +5,10 @@ class Registration_model {
   String? lastname;
   String? email;
   String? password;
+  String? image;
 
-  Registration_model({
-    this.firstname,
-    this.lastname,
-    this.email,
-    this.password,
-  });
+  Registration_model(
+      {this.firstname, this.lastname, this.email, this.password, this.image});
 
   factory Registration_model.fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;

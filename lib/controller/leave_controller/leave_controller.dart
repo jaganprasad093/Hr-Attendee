@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +9,18 @@ class leave_controller with ChangeNotifier {
 
   int get dateDifference => datedifference;
   List<LeaveModel> filteredLeaveList = [];
+
+  late int totalLeave;
+  late int leaveapproved;
+
   leave_controller() {
     fetchData();
+    TeamLeave();
   }
   var collectionReference = FirebaseFirestore.instance.collection("leave");
-  List<LeaveModel> LeaveList = [];
+  List<LeaveModel> upcomming_list = [];
+  List<LeaveModel> teamLeaveList = [];
+  List<LeaveModel> past_list = [];
 
   Future addData(LeaveModel leaveModel) async {
     final data = {
@@ -24,7 +30,8 @@ class leave_controller with ChangeNotifier {
       "start_date": leaveModel.start_date,
       "end_date": leaveModel.end_date,
       "reason": leaveModel.reason,
-      "userid": FirebaseAuth.instance.currentUser!.uid
+      "userid": FirebaseAuth.instance.currentUser!.uid,
+      "current_date": DateTime.now().millisecondsSinceEpoch
     };
 
     await collectionReference.add(data);
@@ -33,21 +40,27 @@ class leave_controller with ChangeNotifier {
   fetchData() {
     collectionReference
         .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        // .where("current_date", isGreaterThanOrEqualTo: DateTime.now())
+        .orderBy("current_date", descending: true)
         .snapshots()
         .listen((event) {
       //  log(event.docs.length);
-      LeaveList = event.docs
+      upcomming_list = event.docs
           .map((e) => LeaveModel(
-                title: e["Title"],
-                contact_no: e["contact_no"],
-                leave_type: e["leave_type"],
-                start_date: e["start_date"],
-                end_date: e["end_date"],
-                reason: e["reason"],
-              ))
+              title: e["Title"],
+              contact_no: e["contact_no"],
+              leave_type: e["leave_type"],
+              start_date: e["start_date"],
+              end_date: e["end_date"],
+              reason: e["reason"],
+              current_date: e["current_date"]))
           .toList();
+
+      upcomming_list.sort(
+          (a, b) => a.current_date!.compareTo(int.parse(b.start_date ?? "")));
       notifyListeners();
     });
+    log("upcoming leaves--${upcomming_list}");
   }
 
   int? calculateDateDifference(LeaveModel leaveModel) {
@@ -66,7 +79,7 @@ class leave_controller with ChangeNotifier {
       }
 
       Duration difference = end.difference(start);
-      int datedifference = difference.inDays;
+      int datedifference = difference.inDays + 1;
 
       log("Difference in days: $datedifference");
 
@@ -87,9 +100,73 @@ class leave_controller with ChangeNotifier {
   }
 
   filterLeaves() {
-    filteredLeaveList = LeaveList.where((leave) {
-      return (calculateDateDifference(leave) ?? 0) > 2;
+    filteredLeaveList = upcomming_list.where((leave) {
+      return (calculateDateDifference(leave) ?? 0) > 2 ||
+          leave.leave_type == "Sick leave" ||
+          leave.leave_type == "Planned leave" ||
+          leave.leave_type == "holiday";
     }).toList();
+    log("leavelist--$filteredLeaveList");
     notifyListeners();
+  }
+
+  void resetData() {
+    upcomming_list.clear();
+    filteredLeaveList.clear();
+    notifyListeners();
+  }
+
+  TeamLeave() {
+    collectionReference
+        .where("userid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .snapshots()
+        .listen((event) {
+      teamLeaveList = event.docs
+          .map((e) => LeaveModel(
+                title: e["Title"],
+                contact_no: e["contact_no"],
+                leave_type: e["leave_type"],
+                start_date: e["start_date"],
+                end_date: e["end_date"],
+                reason: e["reason"],
+              ))
+          .toList();
+      // teamLeaveList=teamLeaveList.
+      notifyListeners();
+      log("teamleavelist---$teamLeaveList");
+    });
+  }
+
+  LeaveBalance() {
+    var sickleave = 12;
+    var Plannedleave = 7;
+    totalLeave = sickleave + Plannedleave;
+  }
+
+  leaveApproved() {}
+  pastFetch() {
+    collectionReference
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        // .where("current_date", isLessThanOrEqualTo: DateTime.now())
+        .orderBy("current_date", descending: true)
+        .snapshots()
+        .listen((event) {
+      //  log(event.docs.length);
+      past_list = event.docs
+          .map((e) => LeaveModel(
+              title: e["Title"],
+              contact_no: e["contact_no"],
+              leave_type: e["leave_type"],
+              start_date: e["start_date"],
+              end_date: e["end_date"],
+              reason: e["reason"],
+              current_date: e["current_date"]))
+          .toList();
+
+      past_list.sort(
+          (a, b) => int.parse(a.end_date ?? "").compareTo(b.current_date!));
+      notifyListeners();
+    });
+    log("upcoming leaves--${upcomming_list}");
   }
 }
