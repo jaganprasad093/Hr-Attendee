@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -101,12 +104,20 @@ class _Leave_pageState extends State<Leave_page> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
                                 ),
-                                Text(
-                                  "0",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.blue),
+                                FutureBuilder(
+                                  future: context
+                                      .read<leave_controller>()
+                                      .LeaveBalance(),
+                                  builder: (context, snapshot) {
+                                    log("${snapshot.data.toString()}");
+                                    return Text(
+                                      snapshot.data.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30,
+                                          color: Colors.blue),
+                                    );
+                                  },
                                 )
                               ],
                             ),
@@ -189,9 +200,9 @@ class _Leave_pageState extends State<Leave_page> {
                                 ),
                                 Consumer<leave_controller>(
                                   builder: (context, value, child) => Text(
-                                    value.upcomming_list.length == null
+                                    value.leave_list.length == null
                                         ? "0"
-                                        : "${value.upcomming_list.length}",
+                                        : "${value.leave_list.length}",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 30,

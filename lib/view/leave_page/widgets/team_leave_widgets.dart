@@ -4,7 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TeamLeave_widgets extends StatefulWidget {
   final LeaveModel leaveModel;
-  const TeamLeave_widgets({super.key, required this.leaveModel});
+
+  const TeamLeave_widgets({
+    super.key,
+    required this.leaveModel,
+  });
 
   @override
   State<TeamLeave_widgets> createState() => _TeamLeave_widgetsState();
@@ -69,9 +73,7 @@ class _TeamLeave_widgetsState extends State<TeamLeave_widgets> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InkWell(
-                  onTap: () async {
-                    setState(() {});
-                  },
+                  onTap: () {},
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     child: Center(
@@ -88,9 +90,7 @@ class _TeamLeave_widgetsState extends State<TeamLeave_widgets> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
-                    accept++;
-                  },
+                  onTap: () {},
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     child: Center(

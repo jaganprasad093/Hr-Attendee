@@ -1,10 +1,7 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/controller/home_controller/home_controller.dart';
 import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/controller/login_controller/login_controller.dart';
-import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
 import 'package:flutter_application_1/controller/teamlist_controller/teamlist_controller.dart';
 import 'package:flutter_application_1/firebase_options.dart';
 import 'package:flutter_application_1/view/splashscreen/splashscreen.dart';

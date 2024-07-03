@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
+import 'package:intl/intl.dart';
 
 class leave_controller with ChangeNotifier {
   int datedifference = 0;
@@ -10,7 +11,7 @@ class leave_controller with ChangeNotifier {
   int get dateDifference => datedifference;
   List<LeaveModel> filteredLeaveList = [];
 
-  late int totalLeave;
+  int totalLeave = 0;
   late int leaveapproved;
 
   leave_controller() {
@@ -18,9 +19,13 @@ class leave_controller with ChangeNotifier {
     TeamLeave();
   }
   var collectionReference = FirebaseFirestore.instance.collection("leave");
-  List<LeaveModel> upcomming_list = [];
+  List<LeaveModel> leave_list = [];
   List<LeaveModel> teamLeaveList = [];
   List<LeaveModel> past_list = [];
+  List<LeaveModel> upcomming_list = [];
+  List<LeaveModel> approvel_list = [];
+
+  var reject;
 
   Future addData(LeaveModel leaveModel) async {
     final data = {
@@ -40,12 +45,13 @@ class leave_controller with ChangeNotifier {
   fetchData() {
     collectionReference
         .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        // .where("current_date", isGreaterThanOrEqualTo: DateTime.now())
+        // .where("current_date",
+        //     isGreaterThanOrEqualTo: DateTime.now().millisecondsSinceEpoch)
         .orderBy("current_date", descending: true)
         .snapshots()
         .listen((event) {
       //  log(event.docs.length);
-      upcomming_list = event.docs
+      leave_list = event.docs
           .map((e) => LeaveModel(
               title: e["Title"],
               contact_no: e["contact_no"],
@@ -55,11 +61,26 @@ class leave_controller with ChangeNotifier {
               reason: e["reason"],
               current_date: e["current_date"]))
           .toList();
-
-      upcomming_list.sort(
-          (a, b) => a.current_date!.compareTo(int.parse(b.start_date ?? "")));
+      // past list
+      past_list = leave_list.where((past) {
+        log("pastlist--${past.start_date},${DateTime.now().millisecondsSinceEpoch}");
+        var _startdate = DateFormat('dd-MM-yyyy')
+            .parse(past.start_date!)
+            .millisecondsSinceEpoch;
+        return (_startdate) < DateTime.now().millisecondsSinceEpoch;
+      }).toList();
+      // upcoming list
+      upcomming_list = leave_list.where((x) {
+        var _current_date = DateFormat('dd-MM-yyyy')
+            .parse(x.start_date!)
+            .millisecondsSinceEpoch;
+        return (_current_date) > DateTime.now().millisecondsSinceEpoch;
+      }).toList();
+      // upcomming_list.sort(
+      //     (a, b) => a.current_date!.compareTo(int.parse(b.start_date ?? "")));
       notifyListeners();
     });
+    log("pastlist--$past_list");
     log("upcoming leaves--${upcomming_list}");
   }
 
@@ -100,18 +121,17 @@ class leave_controller with ChangeNotifier {
   }
 
   filterLeaves() {
-    filteredLeaveList = upcomming_list.where((leave) {
+    filteredLeaveList = leave_list.where((leave) {
       return (calculateDateDifference(leave) ?? 0) > 2 ||
           leave.leave_type == "Sick leave" ||
-          leave.leave_type == "Planned leave" ||
-          leave.leave_type == "holiday";
+          leave.leave_type == "Planned leave";
     }).toList();
     log("leavelist--$filteredLeaveList");
     notifyListeners();
   }
 
   void resetData() {
-    upcomming_list.clear();
+    leave_list.clear();
     filteredLeaveList.clear();
     notifyListeners();
   }
@@ -131,42 +151,36 @@ class leave_controller with ChangeNotifier {
                 reason: e["reason"],
               ))
           .toList();
+
       // teamLeaveList=teamLeaveList.
       notifyListeners();
       log("teamleavelist---$teamLeaveList");
     });
   }
 
-  LeaveBalance() {
+  Future<int> LeaveBalance() async {
     var sickleave = 12;
-    var Plannedleave = 7;
-    totalLeave = sickleave + Plannedleave;
+    var Plannedleave = 8;
+    log(" leave===${leave_list.length}");
+
+    totalLeave = leave_list.length;
+    for (int i = 1; i <= leave_list.length; i++) {
+      if (leave_list.contains("Sick leave")) {
+        sickleave = sickleave - 1;
+        totalLeave = sickleave + Plannedleave;
+      } else {
+        Plannedleave = Plannedleave - 1;
+        log("planned leave-- ${Plannedleave}");
+        totalLeave = sickleave + Plannedleave;
+      }
+    }
+
+    return totalLeave;
   }
 
-  leaveApproved() {}
-  pastFetch() {
-    collectionReference
-        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        // .where("current_date", isLessThanOrEqualTo: DateTime.now())
-        .orderBy("current_date", descending: true)
-        .snapshots()
-        .listen((event) {
-      //  log(event.docs.length);
-      past_list = event.docs
-          .map((e) => LeaveModel(
-              title: e["Title"],
-              contact_no: e["contact_no"],
-              leave_type: e["leave_type"],
-              start_date: e["start_date"],
-              end_date: e["end_date"],
-              reason: e["reason"],
-              current_date: e["current_date"]))
-          .toList();
-
-      past_list.sort(
-          (a, b) => int.parse(a.end_date ?? "").compareTo(b.current_date!));
-      notifyListeners();
-    });
-    log("upcoming leaves--${upcomming_list}");
+// leave approval
+  ApprovalRejection() {
+    // approvel_list = teamLeaveList.remove;
+    var approved_list_lenth = teamLeaveList.length - approvel_list.length;
   }
 }
