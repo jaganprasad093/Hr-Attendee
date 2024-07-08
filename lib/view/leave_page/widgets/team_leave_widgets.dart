@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/controller/leave_controller/leave_controller.dart';
 import 'package:flutter_application_1/model/leave_model/leave_model.dart';
+import 'package:flutter_application_1/view/team_list/team_list.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TeamLeave_widgets extends StatefulWidget {
@@ -73,7 +76,10 @@ class _TeamLeave_widgetsState extends State<TeamLeave_widgets> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    context.read<leave_controller>().ApprovalRejection(
+                        "reject", "${widget.leaveModel.uid}");
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     child: Center(
@@ -90,7 +96,10 @@ class _TeamLeave_widgetsState extends State<TeamLeave_widgets> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    context.read<leave_controller>().ApprovalRejection(
+                        "accept", "${widget.leaveModel.uid}");
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     child: Center(

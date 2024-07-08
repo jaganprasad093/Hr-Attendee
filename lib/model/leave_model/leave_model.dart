@@ -10,6 +10,8 @@ class LeaveModel {
   String? end_date;
   String? reason;
   int? current_date;
+  String? uid;
+  String? status = "pending";
   LeaveModel(
       {this.title,
       this.contact_no,
@@ -17,5 +19,7 @@ class LeaveModel {
       this.leave_type,
       this.reason,
       this.start_date,
-      this.current_date});
+      this.current_date,
+      this.uid,
+      this.status});
 }

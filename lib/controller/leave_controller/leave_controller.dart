@@ -12,7 +12,8 @@ class leave_controller with ChangeNotifier {
   List<LeaveModel> filteredLeaveList = [];
 
   int totalLeave = 0;
-  late int leaveapproved;
+  late int leaveapproved = 0;
+  late int leavereject = 0;
 
   leave_controller() {
     fetchData();
@@ -24,9 +25,8 @@ class leave_controller with ChangeNotifier {
   List<LeaveModel> past_list = [];
   List<LeaveModel> upcomming_list = [];
   List<LeaveModel> approvel_list = [];
-
-  var reject;
-
+  List<LeaveModel> canceled_list = [];
+  // List<LeaveModel> filteredLeaveList1 = [];
   Future addData(LeaveModel leaveModel) async {
     final data = {
       "Title": leaveModel.title,
@@ -36,7 +36,8 @@ class leave_controller with ChangeNotifier {
       "end_date": leaveModel.end_date,
       "reason": leaveModel.reason,
       "userid": FirebaseAuth.instance.currentUser!.uid,
-      "current_date": DateTime.now().millisecondsSinceEpoch
+      "current_date": DateTime.now().millisecondsSinceEpoch,
+      "status": "pending"
     };
 
     await collectionReference.add(data);
@@ -59,6 +60,7 @@ class leave_controller with ChangeNotifier {
               start_date: e["start_date"],
               end_date: e["end_date"],
               reason: e["reason"],
+              status: e["status"],
               current_date: e["current_date"]))
           .toList();
       // past list
@@ -120,18 +122,7 @@ class leave_controller with ChangeNotifier {
     return DateTime(year, month, day);
   }
 
-  filterLeaves() {
-    filteredLeaveList = leave_list.where((leave) {
-      return (calculateDateDifference(leave) ?? 0) > 2 ||
-          leave.leave_type == "Sick leave" ||
-          leave.leave_type == "Planned leave";
-    }).toList();
-    log("leavelist--$filteredLeaveList");
-    notifyListeners();
-  }
-
   void resetData() {
-    leave_list.clear();
     filteredLeaveList.clear();
     notifyListeners();
   }
@@ -139,17 +130,19 @@ class leave_controller with ChangeNotifier {
   TeamLeave() {
     collectionReference
         .where("userid", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where("status", isEqualTo: "pending")
         .snapshots()
         .listen((event) {
       teamLeaveList = event.docs
           .map((e) => LeaveModel(
-                title: e["Title"],
-                contact_no: e["contact_no"],
-                leave_type: e["leave_type"],
-                start_date: e["start_date"],
-                end_date: e["end_date"],
-                reason: e["reason"],
-              ))
+              title: e["Title"],
+              contact_no: e["contact_no"],
+              leave_type: e["leave_type"],
+              start_date: e["start_date"],
+              end_date: e["end_date"],
+              reason: e["reason"],
+              status: e["status"],
+              uid: e.id))
           .toList();
 
       // teamLeaveList=teamLeaveList.
@@ -178,9 +171,138 @@ class leave_controller with ChangeNotifier {
     return totalLeave;
   }
 
-// leave approval
-  ApprovalRejection() {
-    // approvel_list = teamLeaveList.remove;
-    var approved_list_lenth = teamLeaveList.length - approvel_list.length;
+  ApprovelGetData() {
+    collectionReference
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where("status", isEqualTo: "accept")
+        .snapshots()
+        .listen((event) {
+      log("inside 2");
+      approvel_list = event.docs
+          .map((e) => LeaveModel(
+                title: e["Title"],
+                contact_no: e["contact_no"],
+                leave_type: e["leave_type"],
+                start_date: e["start_date"],
+                end_date: e["end_date"],
+                reason: e["reason"],
+                status: e["status"],
+              ))
+          .toList();
+      log("approved list=======${approvel_list.length}");
+      notifyListeners();
+    });
+  }
+
+  CancelledGetData() {
+    collectionReference
+        .where("status", isEqualTo: "reject")
+        .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .snapshots()
+        .listen((event) {
+      log("inside 4");
+      canceled_list = event.docs
+          .map((e) => LeaveModel(
+                title: e["Title"],
+                contact_no: e["contact_no"],
+                leave_type: e["leave_type"],
+                start_date: e["start_date"],
+                end_date: e["end_date"],
+                reason: e["reason"],
+                status: e["status"],
+              ))
+          .toList();
+
+      log("reject list=======${canceled_list.length}");
+      notifyListeners();
+    });
+  }
+
+  ApprovalRejection(String value, String id) async {
+    if (value == "accept") {
+      log("inside 1");
+      await collectionReference.doc(id).update({"status": "accept"});
+      // List approved_list = teamLeaveList;
+      collectionReference
+          // .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where("status", isEqualTo: "accept")
+          .snapshots()
+          .listen((event) {
+        log("inside 2");
+        approvel_list = event.docs
+            .map((e) => LeaveModel(
+                  title: e["Title"],
+                  contact_no: e["contact_no"],
+                  leave_type: e["leave_type"],
+                  start_date: e["start_date"],
+                  end_date: e["end_date"],
+                  reason: e["reason"],
+                  status: e["status"],
+                ))
+            .toList();
+        log("approved list=======${approvel_list.length}");
+
+        notifyListeners();
+      });
+      fetchData();
+      TeamLeave();
+    } else if (value == "reject") {
+      log("inside 3");
+      collectionReference.doc(id).update({"status": "reject"});
+      collectionReference
+          .where("status", isEqualTo: "reject")
+          // .where("userid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .snapshots()
+          .listen((event) {
+        log("inside 4");
+        canceled_list = event.docs
+            .map((e) => LeaveModel(
+                  title: e["Title"],
+                  contact_no: e["contact_no"],
+                  leave_type: e["leave_type"],
+                  start_date: e["start_date"],
+                  end_date: e["end_date"],
+                  reason: e["reason"],
+                  status: e["status"],
+                ))
+            .toList();
+
+        log("reject list=======${canceled_list.length}");
+        notifyListeners();
+      });
+      // log("cancel_list---${canceled_list.length}");
+      TeamLeave();
+      notifyListeners();
+    }
+  }
+
+  filterLeaves(String value) {
+    if (value == "accept") {
+      filteredLeaveList =
+          leave_list.where((test) => test.status == "accept").toList();
+      log("stage1");
+    }
+    if (value == "reject") {
+      leave_list.where((test) => test.status == "reject").toList();
+      log("stage2");
+    } else if (value == "pending") {
+      filteredLeaveList =
+          leave_list.where((test) => test.status == "pending").toList();
+      log("stage3");
+    }
+    if (value == "Sick leave") {
+      filteredLeaveList =
+          leave_list.where((test) => test.leave_type == "Sick leave").toList();
+      log("stage4");
+    }
+    if (value == "Planned leave") {
+      filteredLeaveList = leave_list
+          .where((test) => test.leave_type == "Planned leave")
+          .toList();
+      log("stage5");
+    }
+
+    log("length of filter_list---${filteredLeaveList.length}");
+    notifyListeners();
   }
 }

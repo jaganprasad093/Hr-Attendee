@@ -190,7 +190,8 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                   DropdownButtonFormField(
                     decoration: const InputDecoration(
                       labelText: 'Leave type',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         borderSide: BorderSide(color: Colors.blue),
@@ -223,7 +224,8 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                     controller: contactController,
                     decoration: const InputDecoration(
                       labelText: 'Contact number',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
@@ -246,7 +248,8 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                     decoration: const InputDecoration(
                       suffixIcon: Icon(Icons.date_range_outlined),
                       labelText: 'Start date',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
@@ -268,7 +271,8 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                     decoration: const InputDecoration(
                       labelText: 'End date',
                       suffixIcon: Icon(Icons.date_range_outlined),
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),
@@ -294,7 +298,8 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                       contentPadding: EdgeInsets.symmetric(
                           vertical: 40.0, horizontal: 10.0),
                       labelText: 'Reason',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Colors.blue)),

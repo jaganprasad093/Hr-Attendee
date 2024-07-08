@@ -166,7 +166,7 @@ class LeaveDetails extends StatelessWidget {
                         fontSize: 15, color: Colors.black.withOpacity(.5)),
                   ),
                   Text(
-                    "*not added",
+                    leaveModel.status ?? "*not added",
                     style: TextStyle(
                       fontSize: 20,
                     ),

@@ -14,6 +14,15 @@ class CustomFilterPage extends StatefulWidget {
 
 class _CustomFilterPageState extends State<CustomFilterPage> {
   @override
+  void initState() {
+    context.read<leave_controller>().ApprovelGetData();
+    context.read<leave_controller>().CancelledGetData();
+
+    super.initState();
+  }
+
+// context.read<leave_controller>().filterLeaves();
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -22,24 +31,26 @@ class _CustomFilterPageState extends State<CustomFilterPage> {
               Navigator.pop(context);
             },
             child: Icon(Icons.arrow_back)),
-        title: Text("asdfg"),
+        title: Text("Filter page"),
       ),
-      body: Consumer<leave_controller>(builder: (context, value, child) {
-        log("value--${value.filteredLeaveList.length.toString()}");
-        return Consumer<leave_controller>(
-          builder: (context, value, child) => ListView.separated(
-              itemBuilder: (context, index) {
-                log("value--${value.filteredLeaveList.length.toString()}");
-                return Custom_leave_widgets(
-                  leaveModel: value.filteredLeaveList[index],
-                );
-              },
-              separatorBuilder: (context, index) => SizedBox(
-                    height: 10,
-                  ),
-              itemCount: value.filteredLeaveList.length),
-        );
-      }),
+      body: context.read<leave_controller>().filteredLeaveList.length == 0
+          ? Center(child: Text("Is empty"))
+          : Consumer<leave_controller>(builder: (context, value, child) {
+              log("filter leave list--${value.filteredLeaveList.length}");
+              return Consumer<leave_controller>(
+                builder: (context, value, child) => ListView.separated(
+                    itemBuilder: (context, index) {
+                      log("value--${value.filteredLeaveList.length.toString()}");
+                      return Custom_leave_widgets(
+                        leaveModel: value.filteredLeaveList[index],
+                      );
+                    },
+                    separatorBuilder: (context, index) => SizedBox(
+                          height: 10,
+                        ),
+                    itemCount: value.filteredLeaveList.length),
+              );
+            }),
     );
   }
 }

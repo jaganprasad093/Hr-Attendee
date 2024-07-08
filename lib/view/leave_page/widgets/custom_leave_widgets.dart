@@ -11,6 +11,7 @@ class Custom_leave_widgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var value = leaveModel.status;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -56,7 +57,7 @@ class Custom_leave_widgets extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white),
                   child: Text(
-                    "Pending",
+                    value == "accept" ? "approved" : "pending",
                     style: TextStyle(
                         color: Colors.green, fontWeight: FontWeight.bold),
                   ),
@@ -75,8 +76,8 @@ class Custom_leave_widgets extends StatelessWidget {
                     ),
                     Consumer<leave_controller>(
                       builder: (context, value, child) {
-                        log(" date diffence1:${value.dateDifference}");
-                        log(" date diffence:${value.datedifference}");
+                        // log(" date diffence1:${value.dateDifference}");
+                        // log(" date diffence:${value.datedifference}");
                         return Text(
                           "${value.calculateDateDifference(leaveModel)}",
                           style: TextStyle(

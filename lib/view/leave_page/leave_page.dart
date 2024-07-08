@@ -13,6 +13,8 @@ import 'package:flutter_application_1/model/leave_model/leave_model.dart';
 import 'package:flutter_application_1/view/leave_page/apply_leave/apply_leave.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/custom_leave_widgets.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/filter_page.dart';
+import 'package:flutter_application_1/view/leave_page/widgets/leave_approved.dart';
+import 'package:flutter_application_1/view/leave_page/widgets/leave_cancelled.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/leave_details.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/team_leave_widgets.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +27,15 @@ class Leave_page extends StatefulWidget {
 }
 
 class _Leave_pageState extends State<Leave_page> {
+  @override
+  void initState() {
+    context.read<leave_controller>().ApprovelGetData();
+    context.read<leave_controller>().CancelledGetData();
+    context.read<leave_controller>().LeaveBalance();
+
+    super.initState();
+  }
+
   bool isCheckedApproved = false;
   bool isCheckedUnapproved = false;
   bool isCheckedPending = false;
@@ -109,7 +120,7 @@ class _Leave_pageState extends State<Leave_page> {
                                       .read<leave_controller>()
                                       .LeaveBalance(),
                                   builder: (context, snapshot) {
-                                    log("${snapshot.data.toString()}");
+                                    // log("${snapshot.data.toString()}");
                                     return Text(
                                       snapshot.data.toString(),
                                       style: TextStyle(
@@ -119,51 +130,72 @@ class _Leave_pageState extends State<Leave_page> {
                                     );
                                   },
                                 )
+                                // Consumer<leave_controller>(
+                                //     builder: (context, value, child) => Text(
+                                //           "${value.totalLeave}",
+                                //           style: TextStyle(
+                                //               fontWeight: FontWeight.bold,
+                                //               fontSize: 30,
+                                //               color: Colors.blue),
+                                //         ))
                               ],
                             ),
                           ),
                         ),
                       ]),
                     ),
-                    Container(
-                      height: 150,
-                      width: 180,
-                      decoration: BoxDecoration(
-                          color: Colors.yellow,
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Stack(children: [
-                        Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            height: 145,
-                            width: 175,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "Leave\nApproved",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                Consumer<leave_controller>(
-                                  builder: (context, value, child) => Text(
-                                    "0",
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Leave_approved(),
+                            ));
+                      },
+                      child: Container(
+                        height: 150,
+                        width: 180,
+                        decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Stack(children: [
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              height: 145,
+                              width: 175,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    "Leave\nApproved",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                        color: Colors.yellow),
+                                        fontSize: 20),
                                   ),
-                                )
-                              ],
+                                  Consumer<leave_controller>(
+                                    builder: (context, value, child) {
+                                      log("leave approved---${value.approvel_list.length}");
+                                      return Text(
+                                        "${value.approvel_list.length}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30,
+                                            color: Colors.yellow),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     )
                   ],
                 ),
@@ -215,45 +247,58 @@ class _Leave_pageState extends State<Leave_page> {
                         ),
                       ]),
                     ),
-                    Container(
-                      height: 150,
-                      width: 180,
-                      decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Stack(children: [
-                        Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            height: 145,
-                            width: 175,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "Leave\nCancelled",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                Consumer(
-                                  builder: (context, value, child) => Text(
-                                    "0",
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Leave_cancelled(),
+                            ));
+                      },
+                      child: Container(
+                        height: 150,
+                        width: 180,
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Stack(children: [
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              height: 145,
+                              width: 175,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    "Leave\nCancelled",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                        color: Colors.red),
+                                        fontSize: 20),
                                   ),
-                                )
-                              ],
+                                  Consumer<leave_controller>(
+                                    builder: (context, value, child) {
+                                      log("leavee cancelled---${value.canceled_list.length}");
+                                      return Text(
+                                        "${value.canceled_list.length}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30,
+                                            color: Colors.red),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     )
                   ],
                 ),
@@ -371,8 +416,18 @@ class _Leave_pageState extends State<Leave_page> {
                       builder: (context, value, child) => ListView.separated(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => Custom_leave_widgets(
-                                leaveModel: value.past_list[index],
+                          itemBuilder: (context, index) => InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LeaveDetails(
+                                            leaveModel: value.past_list[index]),
+                                      ));
+                                },
+                                child: Custom_leave_widgets(
+                                  leaveModel: value.past_list[index],
+                                ),
                               ),
                           separatorBuilder: (context, index) => SizedBox(
                                 height: 10,
@@ -410,247 +465,245 @@ class _Leave_pageState extends State<Leave_page> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
-          return SingleChildScrollView(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
-              height: 600,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Filter",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(Icons.close),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: isMorethan,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isMorethan = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Apply leaves morethan 2",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      "Status",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: isCheckedApproved,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCheckedApproved = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Approved",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: isCheckedUnapproved,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCheckedUnapproved = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Unapproved",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: isCheckedPending,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCheckedPending = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Pending",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      "Leave Type",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: isCheckedSickLeave,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCheckedSickLeave = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Sick leave",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: isCheckedPlannedLeave,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCheckedPlannedLeave = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Planned leave",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: isCheckedHoliday,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCheckedHoliday = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Holiday",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              isCheckedApproved = false;
-                              isCheckedUnapproved = false;
-                              isCheckedPending = false;
-                              isCheckedSickLeave = false;
-                              isCheckedPlannedLeave = false;
-                              isCheckedHoliday = false;
-                              isMorethan = false;
-                            });
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 150,
-                            child: Center(
-                              child: Text(
-                                "Reset",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Status",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        activeColor: Colors.blue,
+                        value: isCheckedApproved,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isCheckedApproved = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        "Approved",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        activeColor: Colors.blue,
+                        value: isCheckedUnapproved,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isCheckedUnapproved = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        "Unapproved",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        activeColor: Colors.blue,
+                        value: isCheckedPending,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isCheckedPending = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        "Pending",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "Leave Type",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        activeColor: Colors.blue,
+                        value: isCheckedSickLeave,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isCheckedSickLeave = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        "Sick leave",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        activeColor: Colors.blue,
+                        value: isCheckedPlannedLeave,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isCheckedPlannedLeave = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        "Planned leave",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            isCheckedApproved = false;
+                            isCheckedUnapproved = false;
+                            isCheckedPending = false;
+                            isCheckedSickLeave = false;
+                            isCheckedPlannedLeave = false;
+                            isCheckedHoliday = false;
+                            isMorethan = false;
+                          });
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          child: Center(
+                            child: Text(
+                              "Reset",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
                             ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.blue,
-                            ),
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue,
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            if (isMorethan == true ||
-                                isCheckedSickLeave == true ||
-                                isCheckedHoliday == true ||
-                                isCheckedPlannedLeave == true) {
-                              context.read<leave_controller>().filterLeaves();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CustomFilterPage(),
-                                  ));
-                            } else {}
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 150,
-                            child: Center(
-                              child: Text(
-                                "Apply",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          // if (isMorethan == true ||
+                          //     isCheckedApproved == true ||
+                          //     isCheckedUnapproved == true ||
+                          //     isCheckedPending == true ||
+                          //     isCheckedSickLeave == true ||
+                          //     isCheckedHoliday == true ||
+                          //     isCheckedPlannedLeave == true) {
+
+                          if (isCheckedApproved == true) {
+                            context
+                                .read<leave_controller>()
+                                .filterLeaves("accept");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CustomFilterPage(),
+                                ));
+                          } else if (isCheckedUnapproved == true) {
+                            context
+                                .read<leave_controller>()
+                                .filterLeaves("reject");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CustomFilterPage(),
+                                ));
+                          } else if (isCheckedPending == true) {
+                            context
+                                .read<leave_controller>()
+                                .filterLeaves("pending");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CustomFilterPage(),
+                                ));
+                          } else if (isCheckedSickLeave == true) {
+                            context
+                                .read<leave_controller>()
+                                .filterLeaves("Sick leave");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CustomFilterPage(),
+                                ));
+                          } else {
+                            context
+                                .read<leave_controller>()
+                                .filterLeaves("Planned leave");
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CustomFilterPage(),
+                                ));
+                          }
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          child: Center(
+                            child: Text(
+                              "Apply",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30,
-                    )
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  )
+                ],
               ),
             ),
           );
