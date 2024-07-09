@@ -4,14 +4,14 @@ import 'package:flutter_application_1/view/leave_page/widgets/custom_leave_widge
 import 'package:flutter_application_1/view/leave_page/widgets/leave_details.dart';
 import 'package:provider/provider.dart';
 
-class Leave_cancelled extends StatefulWidget {
-  const Leave_cancelled({super.key});
+class LeavePending extends StatefulWidget {
+  const LeavePending({super.key});
 
   @override
-  State<Leave_cancelled> createState() => _Leave_cancelledState();
+  State<LeavePending> createState() => _LeavePendingState();
 }
 
-class _Leave_cancelledState extends State<Leave_cancelled> {
+class _LeavePendingState extends State<LeavePending> {
   @override
   void initState() {
     context.read<leave_controller>().ApprovelGetData();
@@ -23,33 +23,35 @@ class _Leave_cancelledState extends State<Leave_cancelled> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Leave Cancelled",
+          "Leave Pending",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Column(
-        children: [
-          Consumer<leave_controller>(
-              builder: (context, value, child) => ListView.separated(
-                  shrinkWrap: true,
-                  // physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) => InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LeaveDetails(
-                                    leaveModel: value.approvel_list[index]),
-                              ));
-                        },
-                        child: Custom_leave_widgets(
-                            leaveModel: value.approvel_list[index]),
-                      ),
-                  separatorBuilder: (context, index) => SizedBox(
-                        height: 10,
-                      ),
-                  itemCount: value.approvel_list.length)),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Consumer<leave_controller>(
+                builder: (context, value, child) => ListView.separated(
+                    shrinkWrap: true,
+                    // physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) => InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LeaveDetails(
+                                      leaveModel: value.leave_list[index]),
+                                ));
+                          },
+                          child: Custom_leave_widgets(
+                              leaveModel: value.leave_list[index]),
+                        ),
+                    separatorBuilder: (context, index) => SizedBox(
+                          height: 10,
+                        ),
+                    itemCount: value.leave_list.length)),
+          ],
+        ),
       ),
     );
   }

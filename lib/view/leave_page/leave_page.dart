@@ -16,6 +16,7 @@ import 'package:flutter_application_1/view/leave_page/widgets/filter_page.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/leave_approved.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/leave_cancelled.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/leave_details.dart';
+import 'package:flutter_application_1/view/leave_page/widgets/leave_pending.dart';
 import 'package:flutter_application_1/view/leave_page/widgets/team_leave_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -43,7 +44,6 @@ class _Leave_pageState extends State<Leave_page> {
   bool isCheckedPlannedLeave = false;
   bool isCheckedHoliday = false;
   bool isMorethan = false;
-
   int currentTabIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -115,29 +115,34 @@ class _Leave_pageState extends State<Leave_page> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
                                 ),
-                                FutureBuilder(
-                                  future: context
+                                // FutureBuilder(
+                                //   future: context
+                                //       .read<leave_controller>()
+                                //       .LeaveBalance(),
+                                //   builder: (context, snapshot) {
+                                //     // log("${snapshot.data.toString()}");
+                                //     return Text(
+                                //       snapshot.data.toString(),
+                                //       style: TextStyle(
+                                //           fontWeight: FontWeight.bold,
+                                //           fontSize: 30,
+                                //           color: Colors.blue),
+                                //     );
+                                //   },
+                                // )
+                                Consumer<leave_controller>(
+                                    builder: (context, value, child) {
+                                  context
                                       .read<leave_controller>()
-                                      .LeaveBalance(),
-                                  builder: (context, snapshot) {
-                                    // log("${snapshot.data.toString()}");
-                                    return Text(
-                                      snapshot.data.toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                          color: Colors.blue),
-                                    );
-                                  },
-                                )
-                                // Consumer<leave_controller>(
-                                //     builder: (context, value, child) => Text(
-                                //           "${value.totalLeave}",
-                                //           style: TextStyle(
-                                //               fontWeight: FontWeight.bold,
-                                //               fontSize: 30,
-                                //               color: Colors.blue),
-                                //         ))
+                                      .LeaveBalance();
+                                  return Text(
+                                    "${value.totalLeave}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: Colors.blue),
+                                  );
+                                })
                               ],
                             ),
                           ),
@@ -205,47 +210,57 @@ class _Leave_pageState extends State<Leave_page> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      height: 150,
-                      width: 180,
-                      decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Stack(children: [
-                        Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            height: 145,
-                            width: 175,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "Leave\nPending",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                Consumer<leave_controller>(
-                                  builder: (context, value, child) => Text(
-                                    value.leave_list.length == null
-                                        ? "0"
-                                        : "${value.leave_list.length}",
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LeavePending(),
+                            ));
+                      },
+                      child: Container(
+                        height: 150,
+                        width: 180,
+                        decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Stack(children: [
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              height: 145,
+                              width: 175,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    "Leave\nPending",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                        color: Colors.green),
+                                        fontSize: 20),
                                   ),
-                                )
-                              ],
+                                  Consumer<leave_controller>(
+                                    builder: (context, value, child) => Text(
+                                      value.leave_list.length == null
+                                          ? "0"
+                                          : "${value.leave_list.length}",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30,
+                                          color: Colors.green),
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     ),
                     InkWell(
                       onTap: () {
@@ -623,61 +638,18 @@ class _Leave_pageState extends State<Leave_page> {
                       ),
                       InkWell(
                         onTap: () {
-                          // if (isMorethan == true ||
-                          //     isCheckedApproved == true ||
-                          //     isCheckedUnapproved == true ||
-                          //     isCheckedPending == true ||
-                          //     isCheckedSickLeave == true ||
-                          //     isCheckedHoliday == true ||
-                          //     isCheckedPlannedLeave == true) {
-
-                          if (isCheckedApproved == true) {
-                            context
-                                .read<leave_controller>()
-                                .filterLeaves("accept");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CustomFilterPage(),
-                                ));
-                          } else if (isCheckedUnapproved == true) {
-                            context
-                                .read<leave_controller>()
-                                .filterLeaves("reject");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CustomFilterPage(),
-                                ));
-                          } else if (isCheckedPending == true) {
-                            context
-                                .read<leave_controller>()
-                                .filterLeaves("pending");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CustomFilterPage(),
-                                ));
-                          } else if (isCheckedSickLeave == true) {
-                            context
-                                .read<leave_controller>()
-                                .filterLeaves("Sick leave");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CustomFilterPage(),
-                                ));
-                          } else {
-                            context
-                                .read<leave_controller>()
-                                .filterLeaves("Planned leave");
-
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CustomFilterPage(),
-                                ));
-                          }
+                          context.read<leave_controller>().filterLeaves(
+                              isCheckedApproved,
+                              isCheckedUnapproved,
+                              isCheckedPending,
+                              isCheckedSickLeave,
+                              isCheckedPlannedLeave);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CustomFilterPage(),
+                              ));
+                          // context.read<leave_controller>().resetData();
                         },
                         child: Container(
                           height: 50,

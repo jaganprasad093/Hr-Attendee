@@ -19,6 +19,10 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
+    // context.read<leave_controller>().ApprovelGetData();
+    // context.read<leave_controller>().CancelledGetData();
+    // context.read<leave_controller>().LeaveBalance();
+    context.read<leave_controller>().fetchData();
     var user = FirebaseAuth.instance.currentUser;
 
     Future.delayed(Duration(seconds: 3)).then((value) async {

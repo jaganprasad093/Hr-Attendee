@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_documents.dart';
@@ -105,6 +107,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
               child: TabBarView(children: [
                 Consumer<registration_controller>(
                     builder: (context, value, child) {
+                  print("user list--${value.users_list.length}");
+
                   if (value.users_list.length > 1) {
                     return Custom_PersonalInformation(
                       registrationmodel: value.users_list[1],

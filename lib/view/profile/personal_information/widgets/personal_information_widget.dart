@@ -68,8 +68,8 @@ class _Custom_PersonalInformationState
                 ),
                 Consumer<registration_controller>(
                   builder: (context, value, child) => Text(
-                    context.read<registration_controller>().user?.email ??
-                        "email adress",
+                    //   context.read<registration_controller>().user?.email ??
+                    value.user?.email ?? "email adress",
                     style: TextStyle(
                       fontSize: 20,
                     ),

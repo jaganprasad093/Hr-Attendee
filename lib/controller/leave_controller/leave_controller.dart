@@ -276,33 +276,40 @@ class leave_controller with ChangeNotifier {
     }
   }
 
-  filterLeaves(String value) {
-    if (value == "accept") {
-      filteredLeaveList =
-          leave_list.where((test) => test.status == "accept").toList();
-      log("stage1");
-    }
-    if (value == "reject") {
-      leave_list.where((test) => test.status == "reject").toList();
-      log("stage2");
-    } else if (value == "pending") {
-      filteredLeaveList =
-          leave_list.where((test) => test.status == "pending").toList();
-      log("stage3");
-    }
-    if (value == "Sick leave") {
-      filteredLeaveList =
-          leave_list.where((test) => test.leave_type == "Sick leave").toList();
-      log("stage4");
-    }
-    if (value == "Planned leave") {
-      filteredLeaveList = leave_list
-          .where((test) => test.leave_type == "Planned leave")
-          .toList();
-      log("stage5");
-    }
+  filterLeaves(bool approved, bool unapproved, bool pending, bool sickleave,
+      bool plannedleave) {
+    // List<LeaveModel> templist = [];
+    filteredLeaveList.clear();
+    filteredLeaveList.addAll(leave_list.where((test) {
+      bool isTrue = false;
+      int length = 0;
+      if (sickleave && test.leave_type == 'Sick leave') {
+        length++;
+        // log("sick leave");
+      }
+
+      if (plannedleave && test.leave_type == 'Planned leave') {
+        length++;
+        // log("planned leave");
+      }
+      if (approved && test.status == 'accept') {
+        length++;
+        // log("accept");
+      }
+      if (unapproved && test.status == 'reject') {
+        length++;
+        // log("reject");
+      }
+      if (pending && test.status == 'pending') {
+        length++;
+        // log("pending");
+      }
+
+      return length > 0;
+    }).toList());
 
     log("length of filter_list---${filteredLeaveList.length}");
+    // log("length of temp_list---${templist.length}");
     notifyListeners();
   }
 }

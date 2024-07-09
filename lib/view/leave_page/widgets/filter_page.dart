@@ -17,7 +17,6 @@ class _CustomFilterPageState extends State<CustomFilterPage> {
   void initState() {
     context.read<leave_controller>().ApprovelGetData();
     context.read<leave_controller>().CancelledGetData();
-
     super.initState();
   }
 
