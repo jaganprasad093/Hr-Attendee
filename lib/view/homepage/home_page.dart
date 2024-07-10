@@ -53,9 +53,11 @@ class _HomepageState extends State<Homepage> {
           child: CustomScrollView(
             slivers: [
               SliverAppBar(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      "https://images.pexels.com/photos/12169270/pexels-photo-12169270.jpeg?auto=compress&cs=tinysrgb&w=600"),
+                leading: Consumer<registration_controller>(
+                  builder: (context, value, child) => CircleAvatar(
+                    backgroundImage:
+                        NetworkImage(value.users_list.first.image ?? ""),
+                  ),
                 ),
                 title: Column(
                   mainAxisAlignment: MainAxisAlignment.start,

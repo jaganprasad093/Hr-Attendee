@@ -2,8 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/registration_controller/registration_controller.dart';
+import 'package:flutter_application_1/model/registration_model/registration_model.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_documents.dart';
-import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_information_widget.dart';
+import 'package:flutter_application_1/view/profile/personal_information/widgets/personal_information/personal_information_widget.dart';
 import 'package:flutter_application_1/view/profile/personal_information/widgets/proffestional_informations.dart';
 import 'package:provider/provider.dart';
 
@@ -105,20 +106,22 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 ]),
             Expanded(
               child: TabBarView(children: [
-                Consumer<registration_controller>(
-                    builder: (context, value, child) {
-                  print("user list--${value.users_list.length}");
+                // Consumer<registration_controller>(
+                //     builder: (context, value, child) {
+                //   print("user list--${value.users_list.length}");
 
-                  if (value.users_list.length > 1) {
-                    return Custom_PersonalInformation(
-                      registrationmodel: value.users_list[1],
-                    );
-                  } else {
-                    return Center(
-                      child: Text("Not enough data available"),
-                    );
-                  }
-                }),
+                //   if (value.users_list.length > 1) {
+                //     return Custom_PersonalInformation(
+                //       registrationmodel: value.users_list[1],
+                //     );
+                //   } else {
+                //     return Center(
+                //       child: Text("Not enough data available"),
+                //     );
+                //   }
+                // }),
+                Custom_PersonalInformation(
+                    registrationmodel: Registration_model()),
                 Consumer<registration_controller>(
                     builder: (context, value, child) =>
                         Proffestional_informations()),

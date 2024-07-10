@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/registration_model/registration_model.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +11,7 @@ class registration_controller with ChangeNotifier {
   bool isLoading = false;
   bool uploading = false;
   var collectionReference = FirebaseFirestore.instance.collection("users");
+  final storgeRef = FirebaseStorage.instance.ref();
 
   Registration_model? user;
   List<Registration_model> users_list = [];
@@ -19,7 +21,7 @@ class registration_controller with ChangeNotifier {
 
   registration_controller() {
     addRegisterListener();
-    // addUsersList();
+    addUsersList();
   }
 
   Future<bool> register({
@@ -83,7 +85,9 @@ class registration_controller with ChangeNotifier {
       "email": registrationModel.email,
       "password": registrationModel.password,
       "image": registrationModel.image,
-      "userid": FirebaseAuth.instance.currentUser!.uid
+      "userid": FirebaseAuth.instance.currentUser!.uid,
+      "phoneno": registrationModel.phoneno,
+      "address": registrationModel.address
     };
 
     await collectionReference.doc(uid).set(data);
@@ -102,6 +106,8 @@ class registration_controller with ChangeNotifier {
             lastname: data["lastname"] as String? ?? '',
             email: data["email"],
             password: data["password"] as String? ?? '',
+            address: data["address"] as String? ?? '',
+            phoneno: data["phoneno"] as String? ?? '',
           );
         }
         notifyListeners();
@@ -116,11 +122,13 @@ class registration_controller with ChangeNotifier {
       users_list = event.docs.map((e) {
         final data = e.data();
         return Registration_model(
-          firstname: data?["firstname"] as String? ?? '',
-          lastname: data?["lastname"] as String? ?? '',
-          email: data?["email"],
-          password: data?["password"] as String? ?? '',
-        );
+            firstname: data?["firstname"] as String? ?? '',
+            lastname: data?["lastname"] as String? ?? '',
+            email: data["email"],
+            password: data?["password"] as String? ?? '',
+            address: data?["address"] as String? ?? '',
+            phoneno: data?["phoneno"] as String? ?? '',
+            image: data["image"]);
       }).toList();
       log("Fetched ${users_list.length} users");
       notifyListeners();
@@ -141,6 +149,9 @@ class registration_controller with ChangeNotifier {
                 lastname: e['lastname'],
                 email: e['email'],
                 password: e['password'],
+                phoneno: e['phoneno'],
+                address: e['adress'],
+                image: e['image'],
               ))
           .toList();
       notifyListeners();
@@ -159,19 +170,52 @@ class registration_controller with ChangeNotifier {
   }
 
   Future<void> pickImageFromGallery() async {
+    var url;
     final XFile? img = await picker.pickImage(
       source: ImageSource.gallery,
-      maxWidth: 400,
     );
     if (img != null) {
-      selectedFile = File(img.path);
+      final storageRef = FirebaseStorage.instance.ref();
+      var id = FirebaseAuth.instance.currentUser?.uid ?? "";
+      var folderRef = storageRef.child("profile images");
+      var uploadRef = storageRef.child("profile_images/${img.name}");
+
+      await uploadRef.putFile(File(img.path));
+
+      log("image uploaded");
+      url = await uploadRef.getDownloadURL();
+      log("url --- ${url.toString}");
       notifyListeners();
+      try {
+        await collectionReference
+            .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
+            .update({
+          "image": url,
+        });
+      } catch (e) {
+        log("updated");
+      }
     }
+  }
+
+  selectFile(File? path) {
+    selectedFile = path;
+    notifyListeners();
   }
 
   void resetData() {
     users_list.clear();
     user = null;
     notifyListeners();
+  }
+
+  updateName(Registration_model registration_model) async {
+    await collectionReference
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
+        .update({
+      "firstname": registration_model.firstname,
+      // "phoneno": registration_model.phoneno,
+      // "address": registration_model.address,
+    });
   }
 }

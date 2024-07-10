@@ -285,24 +285,24 @@ class leave_controller with ChangeNotifier {
       int length = 0;
       if (sickleave && test.leave_type == 'Sick leave') {
         length++;
-        // log("sick leave");
+        log("sick leave");
       }
 
       if (plannedleave && test.leave_type == 'Planned leave') {
         length++;
-        // log("planned leave");
+        log("planned leave");
       }
       if (approved && test.status == 'accept') {
         length++;
-        // log("accept");
+        log("accept");
       }
       if (unapproved && test.status == 'reject') {
         length++;
-        // log("reject");
+        log("reject");
       }
       if (pending && test.status == 'pending') {
         length++;
-        // log("pending");
+        log("pending");
       }
 
       return length > 0;

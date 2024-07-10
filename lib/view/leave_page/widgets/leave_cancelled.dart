@@ -32,8 +32,10 @@ class _Leave_cancelledState extends State<Leave_cancelled> {
               builder: (context, value, child) => ListView.separated(
                   shrinkWrap: true,
                   // physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) => Custom_leave_widgets(
-                      leaveModel: value.canceled_list[index]),
+                  itemBuilder: (context, index) {
+                    return Custom_leave_widgets(
+                        leaveModel: value.canceled_list[index]);
+                  },
                   separatorBuilder: (context, index) => SizedBox(
                         height: 10,
                       ),
